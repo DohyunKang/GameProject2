@@ -250,16 +250,15 @@ ALLEGRO_SAMPLE* sample_explode[2];
 
 void audio_init()
 {
-    must_init(al_install_audio(), "audio");
-    must_init(al_init_acodec_addon(), "audio codec");
-    must_init(al_reserve_samples(128), "reserve samples");
+    al_install_audio();
+    al_init_acodec_addon();
+    al_reserve_samples(128);
 
     sample_shot = al_load_sample("shot.flac");
     must_init(sample_shot, "shot sample");
 
     sample_explode[0] = al_load_sample("explode1.flac");
     must_init(sample_explode[0], "explode[0] sample");
-    
     sample_explode[1] = al_load_sample("explode2.flac");
     must_init(sample_explode[1], "explode[1] sample");
 }
@@ -905,7 +904,7 @@ int main()
 
     disp_init();
 
-    //audio_init();
+    audio_init();
 
     must_init(al_init_image_addon(), "image");
     sprites_init();
@@ -914,9 +913,9 @@ int main()
 
     must_init(al_init_primitives_addon(), "primitives");
 
-    //must_init(al_install_audio(), "audio");
-    //must_init(al_init_acodec_addon(), "audio codecs");
-    //must_init(al_reserve_samples(16), "reserve samples");
+    must_init(al_install_audio(), "audio");
+    must_init(al_init_acodec_addon(), "audio codecs");
+    must_init(al_reserve_samples(16), "reserve samples");
 
     al_register_event_source(queue, al_get_keyboard_event_source());
     al_register_event_source(queue, al_get_display_event_source(disp));
