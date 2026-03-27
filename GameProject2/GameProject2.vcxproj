@@ -137,7 +137,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="background.c" />
+    <ClCompile Include="enemy.c" />
     <ClCompile Include="game.c" />
+    <ClCompile Include="player.c" />
+    <ClCompile Include="share.c" />
   </ItemGroup>
   <ItemGroup>
     <None Include="explode1.flac" />
@@ -147,6 +151,9 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="spritesheet.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="game.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

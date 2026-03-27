@@ -1,0 +1,23 @@
+[33mcommit ad8c862acbbbb04b264c362727fa56a48df176d6[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: kangdohyun <kid708502@gmail.com>
+Date:   Wed Mar 25 15:41:43 2026 +0900
+
+    add audio func
+
+[33mcommit adae2282fc65d0ccc5081f50ed1aec8f2cc7018d[m
+Author: LJY <clear3082@naver.com>
+Date:   Wed Mar 25 15:17:03 2026 +0900
+
+    test
+
+[33mcommit 582f90301962cddb3b30a7a4843068738da0f53f[m
+Author: 한국전파진흥협회 <한국전파진흥협회@DESKTOP-SKESDF2>
+Date:   Wed Mar 25 14:32:09 2026 +0900
+
+    초기 커밋.
+
+[33mcommit 31e0c0c1edf13d40a555be33b1e3784c22264597[m
+Author: 한국전파진흥협회 <한국전파진흥협회@DESKTOP-SKESDF2>
+Date:   Wed Mar 25 14:32:07 2026 +0900
+
+    .gitattributes 및 .gitignore을(를) 추가합니다.
