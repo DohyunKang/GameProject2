@@ -150,6 +150,13 @@
     <None Include="shot.flac" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="0.png" />
+    <Image Include="1.png" />
+    <Image Include="2.png" />
+    <Image Include="3.png" />
+    <Image Include="4.png" />
+    <Image Include="5.png" />
+    <Image Include="ingame_male.png" />
     <Image Include="spritesheet.png" />
   </ItemGroup>
   <ItemGroup>
