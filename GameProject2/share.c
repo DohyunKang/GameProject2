@@ -1,8 +1,10 @@
 #include "game.h"
 #define DISP_W BUFFER_W * DISP_SCALE            // 게임 화면의 실제 가로 너비
 #define DISP_H BUFFER_H * DISP_SCALE            // 게임 화면의 실제 세로 너비
-
 // --- general ---
+extern bool key[ALLEGRO_KEY_MAX] = { 0 };
+extern SPRITES sprites;
+
 void must_init(bool test, const char* description)
 {
     if (test) return;
@@ -73,7 +75,6 @@ void disp_post_draw()
 
 #define KEY_SEEN     1
 #define KEY_DOWN     2
-unsigned char key[ALLEGRO_KEY_MAX];
 
 void keyboard_init()
 {
@@ -97,9 +98,88 @@ void keyboard_update(ALLEGRO_EVENT* event)
         break;
     }
 }
-
-
 // --- sprites ---
+
+
+ALLEGRO_BITMAP* sprite_grab(int x, int y, int w, int h)
+{
+    ALLEGRO_BITMAP* sprite = al_create_sub_bitmap(sprites._sheet, x, y, w, h);
+    must_init(sprite, "sprite grab");
+    return sprite;
+}
+
+void sprites_init(void)
+{
+    sprites._sheet = al_load_bitmap("GameIMG.png");
+    must_init(sprites._sheet, "spritesheet");
+
+    /* player: [gender][state][dir] */
+
+    /* male */
+    sprites.player[0][0][0] = sprite_grab(5, 10, PLAYER1_W, PLAYER1_H);
+    sprites.player[0][0][1] = sprite_grab(48, 10, PLAYER1_W, PLAYER1_H);
+
+    sprites.player[0][1][0] = sprite_grab(10, 82, PLAYER2_W, PLAYER2_H);
+    sprites.player[0][1][1] = sprite_grab(45, 78, PLAYER2_W, PLAYER2_H);
+
+    sprites.player[0][2][0] = sprite_grab(178, 80, PLAYER3_W, PLAYER3_H);
+    sprites.player[0][2][1] = sprite_grab(230, 80, PLAYER3_W, PLAYER3_H);
+
+    /* female */
+    sprites.player[1][0][0] = sprite_grab(95, 10, PLAYER1_W, PLAYER1_H);
+    sprites.player[1][0][1] = sprite_grab(140, 8, PLAYER1_W, PLAYER1_H);
+
+    sprites.player[1][1][0] = sprite_grab(92, 81, PLAYER2_W, PLAYER2_H);
+    sprites.player[1][1][1] = sprite_grab(138, 80, PLAYER2_W, PLAYER2_H);
+
+    sprites.player[1][2][0] = sprite_grab(178, 5, PLAYER3_W, PLAYER3_H);
+    sprites.player[1][2][1] = sprite_grab(228, 5, PLAYER3_W, PLAYER3_H);
+
+    /* item */
+    sprites.item[ITEM_HEART] = sprite_grab(4, 200, ITEM_HEART_W, ITEM_HEART_H);
+    sprites.item[ITEM_BARRIER] = sprite_grab(52, 196, ITEM_BARRIER_W, ITEM_BARRIER_H);
+    sprites.item[ITEM_TREASURE_CHEST] = sprite_grab(10, 155, ITEM_TREASURE_CHEST_W, ITEM_TREASURE_CHEST_H);
+
+    /* enemy */
+    sprites.enemy[ENEMY_SPEAR] = sprite_grab(67, 155, ENEMY_SPEAR_W, ENEMY_SPEAR_H);
+    sprites.enemy[ENEMY_BOMB] = sprite_grab(105, 145, ENEMY_BOMB_W, ENEMY_BOMB_H);
+    sprites.enemy[ENEMY_FIREBALL] = sprite_grab(167, 154, ENEMY_FIREBALL_W, ENEMY_FIREBALL_H);
+    sprites.enemy[ENEMY_HOMING] = sprite_grab(212, 148, ENEMY_HOMING_W, ENEMY_HOMING_H);
+}
+
+void sprites_deinit(void)
+{
+    for (int gender = 0; gender < 2; gender++) {
+        for (int state = 0; state < 3; state++) {
+            for (int dir = 0; dir < 2; dir++) {
+                if (sprites.player[gender][state][dir]) {
+                    al_destroy_bitmap(sprites.player[gender][state][dir]);
+                    sprites.player[gender][state][dir] = NULL;
+                }
+            }
+        }
+    }
+
+    for (int i = 0; i < ITEM_TYPE_N; i++) {
+        if (sprites.item[i]) {
+            al_destroy_bitmap(sprites.item[i]);
+            sprites.item[i] = NULL;
+        }
+    }
+
+    for (int i = 0; i < ENEMY_TYPE_N; i++) {
+        if (sprites.enemy[i]) {
+            al_destroy_bitmap(sprites.enemy[i]);
+            sprites.enemy[i] = NULL;
+        }
+    }
+
+    if (sprites._sheet) {
+        al_destroy_bitmap(sprites._sheet);
+        sprites._sheet = NULL;
+    }
+}
+/*
 ALLEGRO_BITMAP* sprite_grab(int x, int y, int w, int h)
 {
     ALLEGRO_BITMAP* sprite = al_create_sub_bitmap(sprites._sheet, x, y, w, h);
@@ -170,7 +250,7 @@ void sprites_deinit()
 
     al_destroy_bitmap(sprites._sheet);
 }
-
+*/
 // --- audio ---
 
 ALLEGRO_SAMPLE* sample_shot;
@@ -198,75 +278,55 @@ void audio_deinit()
     al_destroy_sample(sample_explode[1]);
 }
 
-
-// --- fx ---
-
-typedef struct FX
+/*
+void hud_init()
 {
-    int x, y;
-    int frame;
-    bool spark;
-    bool used;
-} FX;
+    font = al_create_builtin_font();
+    must_init(font, "font");
 
-void fx_init()
-{
-    for (int i = 0; i < FX_N; i++)
-        fx[i].used = false;
+    score_display = 10;
 }
 
-void fx_add(bool spark, int x, int y)
+void hud_deinit()
 {
-    if (!spark)
-        al_play_sample(sample_explode[between(0, 2)], 0.75, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
+    al_destroy_font(font);
+}
 
-    for (int i = 0; i < FX_N; i++)
-    {
-        if (fx[i].used)
-            continue;
-
-        fx[i].x = x;
-        fx[i].y = y;
-        fx[i].frame = 0;
-        fx[i].spark = spark;
-        fx[i].used = true;
+void hud_update()
+{
+    if (frames % 2)
         return;
-    }
-}
 
-void fx_update()
-{
-    for (int i = 0; i < FX_N; i++)
+    for (long i = 5; i > 0; i--)
     {
-        if (!fx[i].used)
-            continue;
-
-        fx[i].frame++;
-
-        if ((!fx[i].spark && (fx[i].frame == (EXPLOSION_FRAMES * 2)))
-            || (fx[i].spark && (fx[i].frame == (SPARKS_FRAMES * 2)))
-            )
-            fx[i].used = false;
+        long diff = 1 << i;
+        if (score_display <= (score - diff))
+            score_display += diff;
     }
 }
 
-void fx_draw()
+void hud_draw()
 {
-    for (int i = 0; i < FX_N; i++)
-    {
-        if (!fx[i].used)
-            continue;
+    al_draw_textf(
+        font,
+        al_map_rgb_f(1, 1, 1),
+        1, 1,
+        0,
+        "%06ld",
+        score_display
+    );
 
-        int frame_display = fx[i].frame / 2;
-        ALLEGRO_BITMAP* bmp =
-            fx[i].spark
-            ? sprites.sparks[frame_display]
-            : sprites.explosion[frame_display]
-            ;
+    int spacing = LIFE_W + 1;
+    for (int i = 0; i < ship.lives; i++)
+        al_draw_bitmap(sprites.life, 1 + (i * spacing), 10, 0);
 
-        int x = fx[i].x - (al_get_bitmap_width(bmp) / 2);
-        int y = fx[i].y - (al_get_bitmap_height(bmp) / 2);
-        al_draw_bitmap(bmp, x, y, 0);
-    }
+    if (ship.lives < 0)
+        al_draw_text(
+            font,
+            al_map_rgb_f(1, 1, 1),
+            BUFFER_W / 2, BUFFER_H / 2,
+            ALLEGRO_ALIGN_CENTER,
+            "surrender"//
+        );
 }
-
+*/

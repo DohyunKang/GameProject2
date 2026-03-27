@@ -11,32 +11,88 @@
 #include <allegro5/allegro_audio.h>
 #include <allegro5/allegro_acodec.h>
 #include <allegro5/allegro_image.h>
+#include <math.h>
+#define MAX_ENEMIES 200
+#define MAX_ITEMS   8
+#define MAX_RANK    10
 
-#define BUFFER_W 400            // 게임 화면의 내부 가로 너비 (해상도)
-#define BUFFER_H 300            // 게임 화면의 내부 세로 높이
-#define DISP_SCALE 2.5          // 화면 확대 비율 (창 크기 조절용)
-#define MAX_ENEMIES 200         // 화면에 동시에 존재할 수 있는 최대 적 수
-#define MAX_ITEMS 8             // 화면에 동시에 존재할 수 있는 최대 아이템 수
-#define MAX_RANK 10             // 랭킹 시스템에 저장될 최대 순위 개수
+#define BUFFER_W 1200
+#define BUFFER_H 900
 
-#define PLAYER_W 30             // 플레이어 가로 크기
-#define PLAYER_H 30             // 플레이어 세로 크기
+#define DISP_SCALE 1
+#define DISP_W (BUFFER_W * DISP_SCALE)
+#define DISP_H (BUFFER_H * DISP_SCALE)
 
-#define HP_W 24                 // 체력 아이템 가로 크기
-#define HP_H 24                 // 체력 아이템 세로 크기
-#define BARRIER_W 24            // 배리어 아이템 가로 크기
-#define BARRIER_H 24            // 배리어 아이템 세로 크기
-#define CHEST_W 24              // 보물상자 아이템 가로 크기
-#define CHEST_H 24              // 보물상자 아이템 세로 크기
+/* -------------------- game state -------------------- */
 
-#define ENEMY1_W 20              // 기본 표창 가로 크기
-#define ENEMY1_H 20              // 기본 표창 세로 크기
-#define ENEMY2_W 20              // 집속탄 가로 크기
-#define ENEMY2_H 20              // 집속탄 세로 크기
-#define ENEMY3_W 20              // 유도 표창 가로 크기
-#define ENEMY3_H 20              // 유도 표창 세로 크기
+typedef enum {
+    STATE_MENU,
+    STATE_MODE_SELECT,
+    STATE_GENDER_SELECT,
+    STATE_PLAYING,
+    STATE_INPUT_NAME,
+    STATE_RANKING,
+    STATE_GAMEOVER,
+    STATE_VICTORY
+} GAME_STATE;
 
+typedef enum {
+    MODE_STORY,
+    MODE_CHALLENGE,
+    MODE_BOSS_ONLY
+} GAME_MODE;
 
+/* -------------------- enemy / item types -------------------- */
+
+typedef enum {
+    ENEMY_SPEAR,
+    ENEMY_BOMB,
+    ENEMY_FIREBALL,
+    ENEMY_HOMING,
+    ENEMY_TYPE_N
+} ENEMY_TYPE;
+
+typedef enum {
+    ITEM_HEART,
+    ITEM_BARRIER,
+    ITEM_TREASURE_CHEST,
+    ITEM_TYPE_N
+} ITEM_TYPE;
+
+/* -------------------- size tables -------------------- */
+
+extern const int PLAYER_W[3];
+extern const int PLAYER_H[3];
+
+extern const int ITEM_W[ITEM_TYPE_N];
+extern const int ITEM_H[ITEM_TYPE_N];
+
+extern const int ENEMY_W[ENEMY_TYPE_N];
+extern const int ENEMY_H[ENEMY_TYPE_N];
+
+#define PLAYER1_W  (PLAYER_W[0])
+#define PLAYER1_H  (PLAYER_H[0])
+#define PLAYER2_W  (PLAYER_W[1])
+#define PLAYER2_H  (PLAYER_H[1])
+#define PLAYER3_W  (PLAYER_W[2])
+#define PLAYER3_H  (PLAYER_H[2])
+
+#define ITEM_HEART_W           (ITEM_W[ITEM_HEART])
+#define ITEM_HEART_H           (ITEM_H[ITEM_HEART])
+#define ITEM_BARRIER_W         (ITEM_W[ITEM_BARRIER])
+#define ITEM_BARRIER_H         (ITEM_H[ITEM_BARRIER])
+#define ITEM_TREASURE_CHEST_W  (ITEM_W[ITEM_TREASURE_CHEST])
+#define ITEM_TREASURE_CHEST_H  (ITEM_H[ITEM_TREASURE_CHEST])
+
+#define ENEMY_SPEAR_W      (ENEMY_W[ENEMY_SPEAR])
+#define ENEMY_SPEAR_H      (ENEMY_H[ENEMY_SPEAR])
+#define ENEMY_BOMB_W       (ENEMY_W[ENEMY_BOMB])
+#define ENEMY_BOMB_H       (ENEMY_H[ENEMY_BOMB])
+#define ENEMY_FIREBALL_W   (ENEMY_W[ENEMY_FIREBALL])
+#define ENEMY_FIREBALL_H   (ENEMY_H[ENEMY_FIREBALL])
+#define ENEMY_HOMING_W     (ENEMY_W[ENEMY_HOMING])
+#define ENEMY_HOMING_H     (ENEMY_H[ENEMY_HOMING])
+/*
 // 게임의 현재 흐름을 제어하는 상태 (메뉴, 게임 중, 결과창 등)
 typedef enum {
     STATE_MENU, STATE_MODE_SELECT, STATE_GENDER_SELECT,
@@ -67,17 +123,32 @@ typedef enum {
     ITEM_BARRIER,               // 방어막 생성
     ITEM_TREASURE_CHEST_TIME    // 보물상자 혹은 시간 관련 아이템
 } ITEM_TYPE;
-
+*/
 // 랭킹 정보 (이름과 클리어 타임)
 typedef struct { char name[16]; float time; } Rank;
+Rank rank;
+
+// 방향 정의
+typedef enum {
+    DIR_LEFT = 0,
+    DIR_RIGHT = 1
+} PLAYER_DIR;
+
+// 상태 정의
+typedef enum {
+    STATE_NORMAL = 0,
+    STATE_BARRIER = 1
+} PLAYER_STATE;
 
 // 플레이어 정보
 typedef struct {
-    float x, y;          // 위치 좌표
-    int hp, gender;      // 체력 및 캐릭터 성별
-    int inv_timer;       // 무적 시간 타이머 (피격 후 깜빡임 등)
-    bool barrier;        // 방어막 보유 여부
-    int barrier_timer;   // 방어막 지속 시간
+    float x, y;
+    int hp, gender;     // 1: 남, 2: 여
+    int inv_timer;
+    bool barrier;
+    int barrier_timer;
+
+    PLAYER_DIR last_dir; // 마지막 누른 키 저장
 } Player;
 
 // 적 정보
@@ -86,8 +157,10 @@ typedef struct {
     float dx, dy;        // 이동 속도 및 방향 (델타 값)
     ENEMY_TYPE type;     // 적 종류
     int timer;           // 패턴용 타이머
+    int frame;
     bool active;         // 현재 화면 존재 여부 (활성화 상태)
 } Enemy;
+
 
 // 아이템 정보
 typedef struct {
@@ -97,31 +170,24 @@ typedef struct {
     bool active;         // 활성화 상태
 } Item;
 
-GAME_STATE state = STATE_MENU;  // 초기 상태는 메뉴 화면
-GAME_MODE mode = MODE_STORY;    // 기본 모드는 스토리 모드
 
-Player p;                       // 플레이어 객체 생성
-Enemy en[MAX_ENEMIES];          // 적 배열 선언
-Item it[MAX_ITEMS];             // 아이템 배열 선언
-Rank ranks[MAX_RANK];           // 랭킹 배열 선언
+typedef struct SPRITES
+{
+    ALLEGRO_BITMAP* _sheet;
 
-int rank_count = 0;             // 현재 등록된 랭킹 개수
-char input_name[16] = "";       // 플레이어가 입력 중인 이름
-int stage = 1;                  // 현재 스테이지 번호
-long frames = 0;                // 게임 시작 후 흐른 총 프레임 수
-float boss_time = 0;            // 보스전 진행 시간 (미정 부분 0으로 처리)
+    // player (성별, 상태, 좌우)
+    ALLEGRO_BITMAP* player[2][3][2];
 
-// 키보드 입력 상태 저장 (ALLEGRO 라이브러리용)
-bool key[ALLEGRO_KEY_MAX] = { 0 };
+    // 아이템
+    ALLEGRO_BITMAP* item[3];
 
-// 효과음 자원
-ALLEGRO_SAMPLE* snd_hit = NULL; // 피격 시 효과음
-ALLEGRO_SAMPLE* snd_die = NULL; // 사망 시 효과음
-
+    // 적
+    ALLEGRO_BITMAP* enemy[4];
+} SPRITES;
 
 // 메뉴 함수 선언
-void store_filed();
-void cal_score();
+//void store_filed();
+//void cal_score();
 void background(int);
 
 // player & item 함수 선언
@@ -132,14 +198,14 @@ void player_draw();
 void item_draw();
 
 // enemy 함수 선언
-void enemy_init();
-void enemy_update();
-void enemy_draw();
+void enemy1_init();
+void enemy1_update();
+void enemy1_draw();
 
 // hud 함수 선언
-void hud_init();
-void hud_update();
-void hud_draw();
+//void hud_init();
+//void hud_update();
+//void hud_draw();
 
 // 공용체 함수
 void must_init(bool test, const char* description);
@@ -166,5 +232,8 @@ void fx_init();
 void fx_add(bool spark, int x, int y);
 void fx_update();
 void fx_draw();
+
+int __title(ALLEGRO_EVENT_QUEUE * q);
+int __end(ALLEGRO_EVENT_QUEUE* q);
 
 #endif

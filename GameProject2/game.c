@@ -1,291 +1,335 @@
 #include "game.h"
 
-// --- general ---
-void must_init(bool test, const char* description)
-{
-    if (test) return;
+GAME_STATE state = STATE_MENU;  // 초기 상태는 메뉴 화면
+GAME_MODE mode = MODE_STORY;    // 기본 모드는 스토리 모드
+const int ITEM_W[] = { 30, 35, 35 };
+const int ITEM_H[] = { 30, 35, 24 };
+const int PLAYER_W[] = { 25, 40, 50 };
+const int PLAYER_H[] = { 55, 50, 60 };
+const int ENEMY_W[] = { 25, 43, 28, 44 };
+const int ENEMY_H[] = { 25, 47, 30, 44 };
+Player p = { 0 };                       // 플레이어 객체 생성
+Enemy enemy[MAX_ENEMIES] = { 0 };          // 적 배열 선언
+Item it[MAX_ITEMS] = { 0 };             // 아이템 배열 선언
+Rank ranks[11] = { 0 };           // 랭킹 배열 선언
+SPRITES sprites = { 0 };
+int rank_count = 0;
+char input_name[16] = { 0 };
+int stage = 0;
+long frame = 0;
+int score = 0;
+int chest_cnt = 0;
+bool key[ALLEGRO_KEY_MAX];
 
-    printf("couldn't initialize %s\n", description);
-    exit(1);
-}
-
-int between(int lo, int hi)
-{
-    return lo + (rand() % (hi - lo));
-}
-
-float between_f(float lo, float hi)
-{
-    return lo + ((float)rand() / (float)RAND_MAX) * (hi - lo);
-}
-
-bool collide(int ax1, int ay1, int ax2, int ay2, int bx1, int by1, int bx2, int by2)
-{
-    if (ax1 > bx2) return false;
-    if (ax2 < bx1) return false;
-    if (ay1 > by2) return false;
-    if (ay2 < by1) return false;
-
-    return true;
-}
-
-
-// --- display ---
-
+ALLEGRO_FONT* font;
 ALLEGRO_DISPLAY* disp;
 ALLEGRO_BITMAP* buffer;
+// 키보드 입력 상태 저장 (ALLEGRO 라이브러리용)
+bool key[ALLEGRO_KEY_MAX];
 
-void disp_init()
-{
-    al_set_new_display_option(ALLEGRO_SAMPLE_BUFFERS, 1, ALLEGRO_SUGGEST);
-    al_set_new_display_option(ALLEGRO_SAMPLES, 8, ALLEGRO_SUGGEST);
+// 효과음 자원
+ALLEGRO_SAMPLE* snd_hit = NULL; // 피격 시 효과음
+ALLEGRO_SAMPLE* snd_die = NULL; // 사망 시 효과음
+static int flag_mode = 0;
 
-    disp = al_create_display(DISP_W, DISP_H);
-    must_init(disp, "display");
+int __title(queue) {
 
-    buffer = al_create_bitmap(BUFFER_W, BUFFER_H);
-    must_init(buffer, "bitmap buffer");
-}
-
-void disp_deinit()
-{
-    al_destroy_bitmap(buffer);
-    al_destroy_display(disp);
-}
-
-void disp_pre_draw()
-{
-    al_set_target_bitmap(buffer);
-}
-
-void disp_post_draw()
-{
-    al_set_target_backbuffer(disp);
-    al_draw_scaled_bitmap(buffer, 0, 0, BUFFER_W, BUFFER_H, 0, 0, DISP_W, DISP_H, 0);
-
-    al_flip_display();
-}
-
-
-// --- keyboard ---
-
-#define KEY_SEEN     1
-#define KEY_DOWN     2
-unsigned char key[ALLEGRO_KEY_MAX];
-
-void keyboard_init()
-{
+    bool done = false;
+    ALLEGRO_EVENT event;
+    al_flush_event_queue(queue);
     memset(key, 0, sizeof(key));
-}
-
-void keyboard_update(ALLEGRO_EVENT* event)
-{
-    switch (event->type)
+    while (1)
     {
-    case ALLEGRO_EVENT_TIMER:
-        for (int i = 0; i < ALLEGRO_KEY_MAX; i++)
-            key[i] &= ~KEY_SEEN;
-        break;
+        al_wait_for_event(queue, &event);
 
-    case ALLEGRO_EVENT_KEY_DOWN:
-        key[event->keyboard.keycode] = KEY_SEEN | KEY_DOWN;
-        break;
-    case ALLEGRO_EVENT_KEY_UP:
-        key[event->keyboard.keycode] &= ~KEY_DOWN;
-        break;
+        switch (event.type)
+        {
+        case ALLEGRO_EVENT_TIMER:
+            if (key[ALLEGRO_KEY_1])
+                done = true;
+
+            if (key[ALLEGRO_KEY_ESCAPE]) {
+                return 1;
+            }
+            break;
+
+        case ALLEGRO_EVENT_DISPLAY_CLOSE:
+            return 1;
+        }
+
+        if (done)
+            break;
+
+        keyboard_update(&event);
+
+        if (al_is_event_queue_empty(queue))
+        {
+            disp_pre_draw();
+            al_clear_to_color(al_map_rgb(0, 0, 0));
+            background(0);  // 첫 타이틀 화면 출력, "enter를 눌러 시작하시오" 같은 문구
+
+            disp_post_draw();
+        }
     }
-}
-
-
-// --- sprites ---
-
-
-typedef struct SPRITES
-{
-    ALLEGRO_BITMAP* _sheet;
-
-    ALLEGRO_BITMAP* ship;
-    ALLEGRO_BITMAP* ship_shot[2];
-    ALLEGRO_BITMAP* life;
-
-    ALLEGRO_BITMAP* alien[3];
-    ALLEGRO_BITMAP* alien_shot;
-
-    ALLEGRO_BITMAP* explosion[EXPLOSION_FRAMES];
-    ALLEGRO_BITMAP* sparks[SPARKS_FRAMES];
-
-    ALLEGRO_BITMAP* powerup[4];
-} SPRITES;
-SPRITES sprites;
-
-ALLEGRO_BITMAP* sprite_grab(int x, int y, int w, int h)
-{
-    ALLEGRO_BITMAP* sprite = al_create_sub_bitmap(sprites._sheet, x, y, w, h);
-    must_init(sprite, "sprite grab");
-    return sprite;
-}
-
-void sprites_init()
-{
-    sprites._sheet = al_load_bitmap("spritesheet.png");
-    must_init(sprites._sheet, "spritesheet");
-
-    sprites.ship = sprite_grab(0, 0, SHIP_W, SHIP_H);
-
-    sprites.ship_shot[0] = sprite_grab(13, 0, SHIP_SHOT_W, SHIP_SHOT_H);
-    sprites.ship_shot[1] = sprite_grab(16, 0, SHIP_SHOT_W, SHIP_SHOT_H);
-
-    sprites.life = sprite_grab(0, 14, LIFE_W, LIFE_H);
-
-    sprites.alien[0] = sprite_grab(19, 0, ALIEN_BUG_W, ALIEN_BUG_H);
-    sprites.alien[1] = sprite_grab(19, 10, ALIEN_ARROW_W, ALIEN_ARROW_H);
-    sprites.alien[2] = sprite_grab(0, 21, ALIEN_THICCBOI_W, ALIEN_THICCBOI_H);
-
-    sprites.alien_shot = sprite_grab(13, 10, ALIEN_SHOT_W, ALIEN_SHOT_H);
-
-    sprites.explosion[0] = sprite_grab(33, 10, 9, 9);
-    sprites.explosion[1] = sprite_grab(43, 9, 11, 11);
-    sprites.explosion[2] = sprite_grab(46, 21, 17, 18);
-    sprites.explosion[3] = sprite_grab(46, 40, 17, 17);
-
-    sprites.sparks[0] = sprite_grab(34, 0, 10, 8);
-    sprites.sparks[1] = sprite_grab(45, 0, 7, 8);
-    sprites.sparks[2] = sprite_grab(54, 0, 9, 8);
-
-    sprites.powerup[0] = sprite_grab(0, 49, 9, 12);
-    sprites.powerup[1] = sprite_grab(10, 49, 9, 12);
-    sprites.powerup[2] = sprite_grab(20, 49, 9, 12);
-    sprites.powerup[3] = sprite_grab(30, 49, 9, 12);
-}
-
-void sprites_deinit()
-{
-    al_destroy_bitmap(sprites.ship);
-
-    al_destroy_bitmap(sprites.ship_shot[0]);
-    al_destroy_bitmap(sprites.ship_shot[1]);
-
-    al_destroy_bitmap(sprites.life);
-
-    al_destroy_bitmap(sprites.alien[0]);
-    al_destroy_bitmap(sprites.alien[1]);
-    al_destroy_bitmap(sprites.alien[2]);
-
-    al_destroy_bitmap(sprites.alien_shot);
-
-    al_destroy_bitmap(sprites.explosion[0]);
-    al_destroy_bitmap(sprites.explosion[1]);
-    al_destroy_bitmap(sprites.explosion[2]);
-    al_destroy_bitmap(sprites.explosion[3]);
-
-    al_destroy_bitmap(sprites.sparks[0]);
-    al_destroy_bitmap(sprites.sparks[1]);
-    al_destroy_bitmap(sprites.sparks[2]);
-
-    al_destroy_bitmap(sprites.powerup[0]);
-    al_destroy_bitmap(sprites.powerup[1]);
-    al_destroy_bitmap(sprites.powerup[2]);
-    al_destroy_bitmap(sprites.powerup[3]);
-
-    al_destroy_bitmap(sprites._sheet);
-}
-
-
-// --- audio ---
-
-ALLEGRO_SAMPLE* sample_shot;
-ALLEGRO_SAMPLE* sample_explode[2];
-
-void audio_init()
-{
-    al_install_audio();
-    al_init_acodec_addon();
-    al_reserve_samples(128);
-
-    sample_shot = al_load_sample("shot.flac");
-    must_init(sample_shot, "shot sample");
-
-    sample_explode[0] = al_load_sample("explode1.flac");
-    must_init(sample_explode[0], "explode[0] sample");
-    sample_explode[1] = al_load_sample("explode2.flac");
-    must_init(sample_explode[1], "explode[1] sample");
-}
-
-void audio_deinit()
-{
-    al_destroy_sample(sample_shot);
-    al_destroy_sample(sample_explode[0]);
-    al_destroy_sample(sample_explode[1]);
-}
-
-
-// --- fx ---
-
-typedef struct FX
-{
-    int x, y;
-    int frame;
-    bool spark;
-    bool used;
-} FX;
-
-void fx_init()
-{
-    for (int i = 0; i < FX_N; i++)
-        fx[i].used = false;
-}
-
-void fx_add(bool spark, int x, int y)
-{
-    if (!spark)
-        al_play_sample(sample_explode[between(0, 2)], 0.75, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
-
-    for (int i = 0; i < FX_N; i++)
+    /*
+    done = false;
+    al_flush_event_queue(queue);
+    memset(key, 0, sizeof(key));
+    while (1)
     {
-        if (fx[i].used)
-            continue;
+        al_wait_for_event(queue, &event);
 
-        fx[i].x = x;
-        fx[i].y = y;
-        fx[i].frame = 0;
-        fx[i].spark = spark;
-        fx[i].used = true;
-        return;
+        switch (event.type)
+        {
+        case ALLEGRO_EVENT_TIMER:
+            if (key[ALLEGRO_KEY_ENTER])
+                done = true;
+
+            if (key[ALLEGRO_KEY_ESCAPE]) {
+                return 1;
+            }
+            break;
+
+        case ALLEGRO_EVENT_DISPLAY_CLOSE:
+            return 1;
+        }
+
+        if (done)
+            break;
+
+        keyboard_update(&event);
+
+        if (al_is_event_queue_empty(queue))
+        {
+            disp_pre_draw();
+            al_clear_to_color(al_map_rgb(0, 0, 0));
+            background(0);  // 두번째 타이틀 화면 출력 >> 모드 선택창
+
+            disp_post_draw();
+        }
     }
+
+    */
+
+    return 0;
 }
 
-void fx_update()
-{
-    for (int i = 0; i < FX_N; i++)
+int __end(queue) {
+    
+
+    //cal_score(); // 점수를 계산, 파일로부터 랭킹을 불러와서 정렬
+
+    bool done = false;
+    ALLEGRO_EVENT event;
+    al_flush_event_queue(queue);
+    memset(key, 0, sizeof(key));
+    while (1)
     {
-        if (!fx[i].used)
-            continue;
+        al_wait_for_event(queue, &event);
 
-        fx[i].frame++;
+        switch (event.type)
+        {
+        case ALLEGRO_EVENT_TIMER:
+            if (key[ALLEGRO_KEY_1]) {
+                done = true;
+                flag_mode = 1;
+            }
+            /*
+            if (key[ALLEGRO_KEY_B]) {
+                done = true;
+                flag_mode = 2;
+            }*/
+            if (key[ALLEGRO_KEY_ESCAPE]) {
+                return 1;
+            }
+            break;
 
-        if ((!fx[i].spark && (fx[i].frame == (EXPLOSION_FRAMES * 2)))
-            || (fx[i].spark && (fx[i].frame == (SPARKS_FRAMES * 2)))
-            )
-            fx[i].used = false;
+        case ALLEGRO_EVENT_DISPLAY_CLOSE:
+            return 1;
+        }
+
+        if (done)
+            break;
+
+        keyboard_update(&event);
+
+        if (al_is_event_queue_empty(queue))
+        {
+            disp_pre_draw();
+            al_clear_to_color(al_map_rgb(0, 0, 0));
+            background(4);  //엔딩 화면 출력 + 점수 표시, 이름 입력받기
+            disp_post_draw();
+        }
     }
+
+
+    done = false;
+    al_flush_event_queue(queue);
+    memset(key, 0, sizeof(key));
+    while (1)
+    {
+        al_wait_for_event(queue, &event);
+
+        switch (event.type)
+        {
+        case ALLEGRO_EVENT_TIMER:
+            if (key[ALLEGRO_KEY_1])
+                done = true;
+
+            if (key[ALLEGRO_KEY_ESCAPE]) {
+                return 1;
+            }
+            break;
+
+        case ALLEGRO_EVENT_DISPLAY_CLOSE:
+            return 1;
+        }
+
+        if (done)
+            break;
+
+        keyboard_update(&event);
+
+        if (al_is_event_queue_empty(queue))
+        {
+            disp_pre_draw();
+            al_clear_to_color(al_map_rgb(0, 0, 0));
+            background(5);  // 두번째 엔딩 화면 출력 , 입력받은 이름 반영 및 랭킹 표시, 타이틀 돌아가기 or 게임 종료 선택
+            disp_post_draw();
+        }
+
+    }
+    //store_score(); // 변경된 랭킹을 파일에 저장
+    return 0;
+    
+
 }
 
-void fx_draw()
+int main()
 {
-    for (int i = 0; i < FX_N; i++)
-    {
-        if (!fx[i].used)
-            continue;
+    must_init(al_init(), "allegro");
+    must_init(al_install_keyboard(), "keyboard");
 
-        int frame_display = fx[i].frame / 2;
-        ALLEGRO_BITMAP* bmp =
-            fx[i].spark
-            ? sprites.sparks[frame_display]
-            : sprites.explosion[frame_display]
-            ;
+    ALLEGRO_TIMER* timer = al_create_timer(1.0 / 60.0);
 
-        int x = fx[i].x - (al_get_bitmap_width(bmp) / 2);
-        int y = fx[i].y - (al_get_bitmap_height(bmp) / 2);
-        al_draw_bitmap(bmp, x, y, 0);
+    must_init(timer, "timer");
+
+    ALLEGRO_EVENT_QUEUE* queue = al_create_event_queue();
+    must_init(queue, "queue");
+
+    disp_init();
+
+    //audio_init();
+
+    must_init(al_init_image_addon(), "image");
+    sprites_init();
+
+    //hud_init();
+
+    must_init(al_init_primitives_addon(), "primitives");
+
+    //must_init(al_install_audio(), "audio");
+    //must_init(al_init_acodec_addon(), "audio codecs");
+    //must_init(al_reserve_samples(16), "reserve samples");
+
+    al_register_event_source(queue, al_get_keyboard_event_source());
+    al_register_event_source(queue, al_get_display_event_source(disp));
+    al_register_event_source(queue, al_get_timer_event_source(timer));
+
+    keyboard_init();
+    enemy1_init();
+
+
+    al_start_timer(timer);
+
+    while (1) {
+
+
+        if (__title(queue))  // if return 1 >> end game
+            return 0;
+
+        frame = 0;
+        score = 0;
+
+        bool done = false;
+        bool redraw = true;
+        ALLEGRO_EVENT event;
+
+
+        stage = 0;
+        state = STATE_PLAYING;
+        pi_init();
+        //__game_loop();
+       
+        while (1)
+        {
+            al_wait_for_event(queue, &event);
+            
+            switch (event.type)
+            {
+            case ALLEGRO_EVENT_TIMER:
+                enemy1_update();   //적 탄환 정보 업데이트
+                player_update();    //자신 캐릭터
+                item_update();
+                //hud_update();     //타이머(프레임기반), 먹은 상자, 스테이지 업데이트
+              
+                if (key[ALLEGRO_KEY_ESCAPE])
+                    done = true;
+
+                redraw = true;
+                frame++;
+                if (!(frame % 60))
+                    stage++;
+                break;
+
+            case ALLEGRO_EVENT_DISPLAY_CLOSE:
+                done = true;
+                break;
+            }
+            
+        if (done)
+            break;
+        
+        keyboard_update(&event);
+
+        //프레임을 통해 시간 계산하여 스테이지 플래그 반영 >> enum
+
+        
+        if (redraw && al_is_event_queue_empty(queue))
+        {
+            disp_pre_draw();
+            al_clear_to_color(al_map_rgb(0, 0, 0));
+            background(1); //배경화면 출력, 각 스테이지마다 다르게 출력
+            ///
+            al_init_primitives_addon();//이거 써야 그림 그려짐(검은 사각형)
+            al_draw_filled_rectangle(200, 200, 1000, 800, al_map_rgb(0, 0, 0));
+            ///
+            player_draw();
+            enemy1_draw();
+            item_draw();
+            //hud_draw(); //시간, 보물상자수, 스테이지 현황 출력
+            
+            // 변경사항 반영, 출력
+            disp_post_draw();
+            redraw = false;
+        }
+        
+            if (p.hp == 0) { // 꺼지기 직전 무언가
+                break;
+            }
+        }
+        
+        if (__end(queue)) // if return 1 >> end game
+            break;
+
     }
+
+    sprites_deinit();
+    //hud_deinit();
+    //audio_deinit();
+    disp_deinit();
+    al_destroy_timer(timer);
+    al_destroy_event_queue(queue);
+
+    return 0;
 }
