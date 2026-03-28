@@ -74,4 +74,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Font Include="font_1.ttf">
+      <Filter>리소스 파일</Filter>
+    </Font>
+  </ItemGroup>
 </Project>
