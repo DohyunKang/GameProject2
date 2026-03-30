@@ -144,7 +144,7 @@ void sprites_init(void)
     sprites.enemy[ENEMY_SPEAR] = sprite_grab(52, 154, ENEMY_SPEAR_W, ENEMY_SPEAR_H);
     sprites.enemy[ENEMY_BOMB] = sprite_grab(84, 145, ENEMY_BOMB_W, ENEMY_BOMB_H);
     sprites.enemy[ENEMY_FIREBALL] = sprite_grab(131, 153, ENEMY_FIREBALL_W, ENEMY_FIREBALL_H);
-    sprites.enemy[ENEMY_HOMING] = sprite_grab(160, 150, ENEMY_HOMING_W, ENEMY_HOMING_H);
+    sprites.enemy[ENEMY_HOMING] = sprite_grab(165, 151, ENEMY_HOMING_W, ENEMY_HOMING_H);
 
     /* fx */
     sprites.enemy2_bomb[0] = sprite_grab(6, 194, 38, 40);

@@ -3,6 +3,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #define _USE_MATH_DEFINES
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <allegro5/allegro5.h>
@@ -206,8 +207,6 @@ typedef struct SPRITES
 } SPRITES;
 
 
-
-
 ALLEGRO_BITMAP* MAP[6];
 
 
@@ -275,6 +274,11 @@ ALLEGRO_BITMAP* sprite_grab(int x, int y, int w, int h);
 void sprites_init();
 void sprites_deinit();
 
+ALLEGRO_SAMPLE* enemy_explode[3];
+ALLEGRO_SAMPLE* item[3];
+ALLEGRO_SAMPLE* death[2];
+ALLEGRO_SAMPLE* hit[2];
+
 void audio_init();
 void audio_deinit();
 
@@ -290,8 +294,6 @@ bool enemies_collide(int stage, int x, int y, int w, int h);
 
 int title(ALLEGRO_EVENT_QUEUE * q);
 int end(ALLEGRO_EVENT_QUEUE* q);
-
-
 
 
 void boss_fight_loop(ALLEGRO_EVENT_QUEUE*);

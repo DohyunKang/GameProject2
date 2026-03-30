@@ -14,8 +14,6 @@ extern Item it[MAX_ITEMS];
 extern Player p;
 extern GAME_STATE state;
 //extern Enemy enemy[MAX_ENEMIES];
-extern ALLEGRO_SAMPLE* snd_hit;
-extern ALLEGRO_SAMPLE* snd_die;
 extern GAME_MODE mode;
 extern unsigned char key[ALLEGRO_KEY_MAX];
 extern SPRITES sprites;
@@ -67,6 +65,7 @@ void player_update()
 	// 적군 충돌 판정 (독립적) -> 수정: 이재영
 	if (p.inv_timer == 0 && enemies_collide(stage, (int)p.x, (int)p.y, current_w, current_h))
 	{
+
 		if (p.barrier)
 		{
 			p.barrier = false;
@@ -76,19 +75,14 @@ void player_update()
 		{
 			p.hp--;
 			p.inv_timer = 120;
+			if (p.hp > 0) al_play_sample(hit[between(0, 2)], 0.8, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
 		}
 
 		if (p.hp <= 0)
 		{
-			if (snd_die)
-				al_play_sample(snd_die, 1.0, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
+			al_play_sample(death[between(0, 2)], 0.6, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
 
 			state = (mode == MODE_CHALLENGE) ? STATE_INPUT_NAME : STATE_GAMEOVER;
-		}
-		else
-		{
-			if (snd_hit)
-				al_play_sample(snd_hit, 1.0, 0, 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
 		}
 	}
 
@@ -111,14 +105,19 @@ void player_update()
 		{
 			it[i].active = false;
 			if (it[i].type == ITEM_HEART && p.hp < 5)
+			{
+				al_play_sample(item[0], 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
 				p.hp++;
+			}
 			else if (it[i].type == ITEM_BARRIER)
 			{
+				al_play_sample(item[1], 0.2, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
 				p.barrier = true;
 				p.barrier_timer = 300;
 			}
 			else if (it[i].type == ITEM_TREASURE_CHEST)  //??????
 			{
+				al_play_sample(item[2], 0.4, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
 				chest_cnt++;
 			}
 		}

@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="audio.c" />
     <ClCompile Include="background.c" />
     <ClCompile Include="doro.c" />
     <ClCompile Include="enemy.c" />
@@ -149,12 +150,14 @@
     <ClCompile Include="share.c" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="explode1.flac" />
-    <None Include="explode2.flac" />
     <None Include="packages.config" />
-    <None Include="shot.flac" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\..\..\Users\한국전파진흥협회\Downloads\enemy_razer-Photoroom.png" />
+    <Image Include="..\..\..\..\Users\한국전파진흥협회\Downloads\pre_shot_razer.png" />
+    <Image Include="..\..\..\..\Users\한국전파진흥협회\Downloads\razer_fx1-Photoroom.png" />
+    <Image Include="..\..\..\..\Users\한국전파진흥협회\Downloads\razer_fx2-Photoroom.png" />
+    <Image Include="..\..\..\..\Users\한국전파진흥협회\Downloads\razer_fx3-Photoroom.png" />
     <Image Include="0.png" />
     <Image Include="1.png" />
     <Image Include="2.png" />
@@ -168,6 +171,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="..\..\..\..\Users\한국전파진흥협회\Downloads\boom_reze.wav" />
+    <Media Include="..\..\..\..\Users\한국전파진흥협회\Downloads\enemy1_3.wav" />
+    <Media Include="..\..\..\..\Users\한국전파진흥협회\Downloads\enemy2_bomb.wav" />
+    <Media Include="..\..\..\..\Users\한국전파진흥협회\Downloads\Item_barrier.wav" />
+    <Media Include="..\..\..\..\Users\한국전파진흥협회\Downloads\Item_heart.wav" />
+    <Media Include="..\..\..\..\Users\한국전파진흥협회\Downloads\Item_treasure.wav" />
+    <Media Include="death1.wav" />
+    <Media Include="death2.wav" />
+    <Media Include="hit1.wav" />
+    <Media Include="hit2.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

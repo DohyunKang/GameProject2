@@ -28,13 +28,14 @@ extern long frame;
 
 /* 적 개수 */
 #define ENEMY1_N 8
-#define ENEMY2_N 3
+#define ENEMY2_N 2
 #define ENEMY3_N 64
-#define ENEMY4_N 3
+#define ENEMY4_N 2
 
 /* 적 속도 및 주기 */
 #define ENEMY1_SPEED         4.0f
 #define ENEMY1_SPAWN_CYCLE   15     // ex) 45 / 60 = 0.75초마다 생성
+#define ENEMY1_AUDIO_CYCLE   50
 
 #define ENEMY2_SPAWN_CYCLE   60
 #define ENEMY2_TIMER         240    // ex) 240 / 60frame = 4초 뒤에 폭발
@@ -136,8 +137,13 @@ bool enemy1_add(void)
 
 void enemy1_update(void)
 {
-    if (frame % ENEMY1_SPAWN_CYCLE == 0)
+    if (frame % ENEMY1_SPAWN_CYCLE == 0) {
         enemy1_add();
+    }
+
+    if (frame % ENEMY1_AUDIO_CYCLE == 0) {
+        al_play_sample(enemy_explode[2], 0.5, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
+    }
 
     for (int i = 0; i < ENEMY1_N; i++)
     {
@@ -237,6 +243,7 @@ void enemy2_update(void)
         {
             int cx = (int)(enemy2[i].x + ENEMY_W[ENEMY_BOMB] / 2);
             int cy = (int)(enemy2[i].y + ENEMY_H[ENEMY_BOMB] / 2);
+            al_play_sample(enemy_explode[0], 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
             fx_add(false, cx, cy);
             enemy3_add(cx, cy);
             enemy2[i].active = false;
@@ -426,6 +433,7 @@ void enemy4_update(float player_x, float player_y)
 
         if (enemy4[i].timer <= 0)
         {
+            al_play_sample(enemy_explode[1], 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
             fx_add(true, enemy4[i].x, enemy4[i].y);
             enemy4[i].active = false;
             continue;

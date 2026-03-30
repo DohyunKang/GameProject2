@@ -4,7 +4,7 @@ GAME_STATE state = STATE_MENU;  // 초기 상태는 메뉴 화면
 GAME_MODE mode = MODE_STORY;    // 기본 모드는 스토리 모드
 const int ITEM_W[] = { 27, 30, 36 };
 const int ITEM_H[] = { 26, 30, 24 };
-const int PLAYER_W[] = { 34, 43, 54 };
+const int PLAYER_W[] = { 34, 41, 54 };
 const int PLAYER_H[] = { 57, 50, 57 };
 const int ENEMY_W[] = { 27, 40, 23, 30 };
 const int ENEMY_H[] = { 25, 37, 25, 30 };
@@ -27,10 +27,6 @@ ALLEGRO_FONT* font_l;
 ALLEGRO_DISPLAY* disp;
 ALLEGRO_BITMAP* buffer;
 
-
-// 효과음 자원
-ALLEGRO_SAMPLE* snd_hit = NULL; // 피격 시 효과음
-ALLEGRO_SAMPLE* snd_die = NULL; // 사망 시 효과음
 int flag_mode = 0;
 
 int title(queue) {
@@ -260,7 +256,7 @@ int main()
     must_init(queue, "queue");
 
     disp_init();
-    //audio_init();
+    audio_init();
 
     must_init(al_init_image_addon(), "image");
     sprites_init();
@@ -271,9 +267,9 @@ int main()
     hud_init();
     must_init(al_init_primitives_addon(), "primitives");
 
-    //must_init(al_install_audio(), "audio");
-    //must_init(al_init_acodec_addon(), "audio codecs");
-    //must_init(al_reserve_samples(16), "reserve samples");
+    must_init(al_install_audio(), "audio");
+    must_init(al_init_acodec_addon(), "audio codecs");
+    must_init(al_reserve_samples(16), "reserve samples");
 
     al_register_event_source(queue, al_get_keyboard_event_source());
     al_register_event_source(queue, al_get_display_event_source(disp));
@@ -399,7 +395,7 @@ int main()
 
     sprites_deinit();
     hud_deinit();
-    //audio_deinit();
+    audio_deinit();
     disp_deinit();
     al_destroy_timer(timer);
     al_destroy_event_queue(queue);
