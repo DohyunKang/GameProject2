@@ -133,6 +133,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="bgm_8.ogg" />
+    <None Include="bgm_9.ogg" />
     <None Include="explode1.flac" />
     <None Include="explode2.flac" />
     <None Include="packages.config" />
@@ -158,12 +160,15 @@
     <Image Include="5.png" />
     <Image Include="6.png" />
     <Image Include="7.png" />
+    <Image Include="8.png" />
+    <Image Include="9.png" />
     <Image Include="Boss_Clear.png" />
     <Image Include="Boss_Defeat.png" />
     <Image Include="doro.png" />
     <Image Include="doro_m.png" />
     <Image Include="GameIMG.png" />
     <Image Include="KakaoTalk_20260330_135810416.png.jpg" />
+    <Image Include="razer_IMG.png" />
     <Image Include="spritesheet.png" />
   </ItemGroup>
   <ItemGroup>

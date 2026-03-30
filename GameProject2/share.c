@@ -159,8 +159,17 @@ void sprites_init(void)
     sprites.enemy4_bomb[4] = sprite_grab(90, 240, 30, 47);
 
     /*∑π¿Ã¿˙*/
-    sprites.enemy5_pre = sprite_grab(185, 78, PLAYER3_W, PLAYER3_H);
-    sprites.enemy5_act = sprite_grab(185, 78, PLAYER3_W, PLAYER3_H);
+    sprites._sheet = al_load_bitmap("razer_IMG.png");
+
+    sprites.enemy_razer = sprite_grab(121, 12, ENEMY_RAZER_W, ENEMY_RAZER_H);
+
+    sprites.razer_before_fx = sprite_grab(125, 85, 710, 40);
+
+    sprites.razer_fx[0] = sprite_grab(145, 145, 73, 77);
+    sprites.razer_fx[1] = sprite_grab(144, 240, 163, 83);
+    sprites.razer_fx[2] = sprite_grab(342, 232, 366, 96);
+
+    sprites.razer_after_fx = sprite_grab(149, 385, 228, 79);
 }
 
 void sprites_deinit(void)
@@ -203,6 +212,30 @@ void sprites_deinit(void)
             sprites.enemy4_bomb[i] = NULL;
         }
     }
+
+    if (sprites.enemy_razer) {
+        al_destroy_bitmap(sprites.enemy_razer);
+        sprites.enemy_razer = NULL;
+    }
+
+    if (sprites.razer_before_fx) {
+        al_destroy_bitmap(sprites.razer_before_fx);
+        sprites.razer_before_fx = NULL;
+    }
+
+    for (int i = 0; i < ENEMY_RAZER_FRAMES; i++) {
+        if (sprites.razer_fx[i]) {
+            al_destroy_bitmap(sprites.razer_fx[i]);
+            sprites.razer_fx[i] = NULL;
+        }
+    }
+
+    if (sprites.razer_after_fx) {
+        al_destroy_bitmap(sprites.razer_after_fx);
+        sprites.razer_after_fx = NULL;
+    }
+
+
 
     if (sprites._sheet) {
         al_destroy_bitmap(sprites._sheet);

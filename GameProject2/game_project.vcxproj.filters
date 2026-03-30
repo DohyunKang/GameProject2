@@ -25,6 +25,12 @@
     <None Include="shot.flac">
       <Filter>리소스 파일</Filter>
     </None>
+    <None Include="bgm_8.ogg">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="bgm_9.ogg">
+      <Filter>리소스 파일</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ex.c">
@@ -99,6 +105,15 @@
       <Filter>리소스 파일</Filter>
     </Image>
     <Image Include="Boss_Clear.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="razer_IMG.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="8.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="9.png">
       <Filter>리소스 파일</Filter>
     </Image>
   </ItemGroup>

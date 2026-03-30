@@ -156,6 +156,8 @@
     <None Include="bgm_3.ogg" />
     <None Include="bgm_4.ogg" />
     <None Include="bgm_5.ogg" />
+    <None Include="bgm_8.ogg" />
+    <None Include="bgm_9.ogg" />
     <None Include="explode1.flac" />
     <None Include="explode2.flac" />
     <None Include="packages.config" />
@@ -170,6 +172,8 @@
     <Image Include="5.png" />
     <Image Include="6.png" />
     <Image Include="7.png" />
+    <Image Include="8.png" />
+    <Image Include="9.png" />
     <Image Include="Boss_Clear.png" />
     <Image Include="Boss_Defeat.png" />
     <Image Include="Character_Select.png" />

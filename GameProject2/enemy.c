@@ -17,7 +17,8 @@ extern Enemy enemy[MAX_ENEMIES];
 extern SPRITES sprites;
 extern long frame;
 
-
+#define ENEMY1_AUDIO_CYCLE 50
+#define ENEMY5_W 50
 
 
 
@@ -123,6 +124,9 @@ void enemy1_update(void)
     if (frame % ENEMY1_SPAWN_CYCLE == 0)
         enemy1_add();
 
+    if (frame % ENEMY1_AUDIO_CYCLE == 0) {
+        al_play_sample(enemy_explode[2], 0.5, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
+    }
     for (int i = 0; i < ENEMY1_N; i++)
     {
         if (!enemy1[i].active)
@@ -221,7 +225,8 @@ void enemy2_update(void)
         {
             int cx = (int)(enemy2[i].x + ENEMY_W[ENEMY_BOMB] / 2);
             int cy = (int)(enemy2[i].y + ENEMY_H[ENEMY_BOMB] / 2);
-            fx_add(false, cx, cy);
+            al_play_sample(enemy_explode[0], 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
+            fx_add(0, cx, cy);
             enemy3_add(cx, cy);
             enemy2[i].active = false;
         }
@@ -410,7 +415,8 @@ void enemy4_update(float player_x, float player_y)
 
         if (enemy4[i].timer <= 0)
         {
-            fx_add(true, enemy4[i].x, enemy4[i].y);
+            al_play_sample(enemy_explode[1], 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
+            fx_add(1, enemy4[i].x, enemy4[i].y);
             enemy4[i].active = false;
             continue;
         }
@@ -517,23 +523,24 @@ void enemy5_init() {
         for (int i = 0; i < ENEMY5_N; i++)
 			enemy5[i].active = false;
 }
-bool enemy5_add() {
+bool enemy5_add(int x, int y) {
 
     for (int i = 0; i < ENEMY5_N; i++)
     {
         if (enemy5[i].active)
             continue;
 
-        enemy5[i].x = 200;
-        enemy5[i].y = between_f(MAP_TOP, MAP_BOTTOM - ENEMY5_W);
+        enemy5[i].x = x;
+        enemy5[i].y = y;
 
-        enemy5[i].timer = 30;
+        enemy5[i].timer = 50;
         enemy5[i].active = true;
         return true;
     }
 
     return false;
 }
+
 void enemy5_update() {
     for (int i = 0; i < 4; i++)
     {
@@ -545,6 +552,7 @@ void enemy5_update() {
         if (enemy5[i].timer <= 0)
         {
             enemy5[i].active = false;
+
             continue;
         }
     }
@@ -558,7 +566,7 @@ bool enemy5_collide(int x, int y, int w, int h)
             continue;
 
         int sw = 800;
-        int sh = 20;
+		int sh = ENEMY5_W;            //레이저의 너비
 
         float ex1 = enemy5[i].x;
         float ey1 = enemy5[i].y;
@@ -581,7 +589,7 @@ void enemy5_draw() {
         if (!enemy5[i].active)
             continue;
         
-        al_draw_scaled_bitmap(sprites.enemy5_act, 0, 0, PLAYER3_W, PLAYER3_H, enemy5[i].x, enemy5[i].y, 800, 20, 0);
+        al_draw_scaled_bitmap(sprites.enemy_razer, 0, 0, ENEMY_RAZER_W, ENEMY_RAZER_H, enemy5[i].x, enemy5[i].y, 800, ENEMY5_W, 0);
 
     }
 }

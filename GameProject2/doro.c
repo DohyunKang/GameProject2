@@ -8,7 +8,6 @@ extern bool win;
 extern Enemy enemy2[ENEMY2_N];
 
 DORO_s doro;
-int flag_l = 0;
 
 #define ALIEN_SHOT_W 12
 #define ALIEN_SHOT_H 12
@@ -30,6 +29,11 @@ typedef enum {
     DORO_HIT
 } DORO_STATE;
 
+typedef enum {
+    RAZER_p, 
+    RAZER_do,
+} RAZER_STATE;
+int flag_l = RAZER_p;
 struct SPRITES_D 
 {
     ALLEGRO_BITMAP* _sheet;
@@ -66,6 +70,9 @@ bool shots_add(int x, int y)
         shots[i].x = p.x;
         shots[i].y = p.y;
 
+        shots[i].dx = (doro.x - p.x) / 100;
+        shots[i].dy = (doro.y - p.y) / 100;
+
         shots[i].active = true;
 
         return true;
@@ -80,8 +87,8 @@ void shots_update()
         if (!shots[i].active)
             continue;
 
-
-        shots[i].y -= 5;
+        shots[i].x += shots[i].dx;
+        shots[i].y += shots[i].dy;
 
         if (shots[i].y < 200)
         {
@@ -102,13 +109,29 @@ void shots_draw()
 
     }
 }
-
+int r_timer = 0;
+int razer[3] = { 0, 0, 0 };
 void doro_attack_1() {
-    for (int i = 0; i < 3; i++)
-    {
-        enemy5_add();
+    r_timer--;
+    if (!(r_timer)) {
+        switch (flag_l)
+        {
+        case RAZER_p:
+            flag_l = RAZER_do;
+            fx_add(2, 200, razer[0] + 30);
+            fx_add(2, 200, razer[1] + 30);
+            fx_add(2, 200, razer[2] + 30);
+            r_timer = 50;
+            break;
+        case RAZER_do:
+            flag_l = RAZER_p;
+            enemy5_add(200, razer[0]);
+            enemy5_add(200, razer[1]);
+            enemy5_add(200, razer[2]);
+            r_timer = 50;
+            break;
+        }
     }
-    flag_l = 1;
     return;
 }
 
@@ -131,9 +154,10 @@ void doro_attack_draw() {
 void doro_init() {
 
     doro.x = 500;
-    doro.y = 300;
+    doro.y = 200;
     doro.hp = 200;
     doro.timer = 60; //1초 후 동작
+	doro.state = DORO_IDLE;
 
     DORO_img._sheet = al_load_bitmap("doro_m.png");
 
@@ -224,8 +248,14 @@ void doro_update() {
         if (doro.timer <= 0) {
             // 공격 1 또는 2 결정
             doro.attack = rand() % 2 + 1;
-            doro.timer = 50;      
-            flag_l = 0;
+            doro.timer = 50;      //50 프레임 동안 공격
+            if (doro.attack == 1)
+            {
+                for (int i = 0; i < 3; ++i)
+                    razer[i] = between_f(MAP_TOP, MAP_BOTTOM - ENEMY5_W);
+                doro.timer = 100;
+                r_timer = 1;
+            }
             doro.state = DORO_ATTACKING;
         }
         break;
@@ -237,8 +267,7 @@ void doro_update() {
         break;
     case DORO_ATTACKING:
         if (doro.attack == 1) {
-            if (flag_l == 0)
-                doro_attack_1();
+            doro_attack_1();
         }
         if (doro.attack == 2) {
             doro_attack_2();
@@ -270,8 +299,10 @@ void doro_update() {
             {
                 doro.hp -= 5;
                 shots[i].active = false;
-                doro.state = DORO_HIT;
-                doro.timer = 5;
+                if (doro.state != DORO_ATTACKING) {
+                    doro.state = DORO_HIT;
+                    doro.timer = 5;
+                }
             }
         }
     }
@@ -281,6 +312,8 @@ void doro_update() {
 void boss_fight_loop(ALLEGRO_EVENT_QUEUE* queue) {
     shots_init();
     doro_init();
+    enemies_init();
+    fx_init();
     bool done= false;
     bool redraw = true;
     ALLEGRO_EVENT event;
@@ -307,6 +340,7 @@ void boss_fight_loop(ALLEGRO_EVENT_QUEUE* queue) {
             enemy3_update();
             enemy4_updatex(p.x, p.y);
             enemy5_update();
+            fx_update();
             player_update();    //자신 캐릭터
             hud_update();     //타이머(프레임기반), 먹은 상자, 스테이지 업데이트
 
@@ -340,12 +374,13 @@ void boss_fight_loop(ALLEGRO_EVENT_QUEUE* queue) {
             ///
             al_draw_filled_rectangle(200, 200, 1000, 800, al_map_rgb(0, 0, 0));
             ///
-            doro_draw();
+            
+            fx_draw();
             player_draw();
             shots_draw();
 
             doro_attack_draw();
-            
+            doro_draw();
             item_draw();
             hud_draw(); //시간, 보물상자수, 스테이지 현황 출력
             // 변경사항 반영, 출력

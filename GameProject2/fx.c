@@ -1,6 +1,6 @@
-#include "game.h"
+﻿#include "game.h"
 
-#define FX_N 128
+#define FX_N 156
 
 FX fx[FX_N];
 SPRITES sprites;
@@ -11,7 +11,7 @@ void fx_init()
         fx[i].used = false;
 }
 
-void fx_add(bool enemy, int x, int y)
+void fx_add(int enemy, int x, int y)
 {
     /*if (!spark)
         al_play_sample(sample_explode[between(0, 2)], 0.75, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);*/
@@ -39,9 +39,13 @@ void fx_update()
 
         fx[i].frame++;
 
-        if ((!fx[i].enemy && (fx[i].frame == (ENEMY2_FX_FRAMES * 4)))
-            || (fx[i].enemy && (fx[i].frame == (ENEMY4_FX_FRAMES * 4)))
+        if ((fx[i].enemy == 0 && (fx[i].frame == (ENEMY2_FX_FRAMES * 8)))
+            || (fx[i].enemy == 1 && (fx[i].frame == (ENEMY4_FX_FRAMES * 8)))
+            || (fx[i].enemy == 2 && (fx[i].frame == (ENEMY_BEFORE_RAZER_FRAMES * 50)))
+            || (fx[i].enemy == 3 && (fx[i].frame == (ENEMY_RAZER_FRAMES * 8)))
+            || (fx[i].enemy == 4 && (fx[i].frame == (ENEMY_AFTER_RAZER_FRAMES * 8)))
             )
+
             fx[i].used = false;
     }
 }
@@ -53,15 +57,30 @@ void fx_draw()
         if (!fx[i].used)
             continue;
 
-        int frame_display = fx[i].frame / 4;
-        ALLEGRO_BITMAP* bmp =
-            fx[i].enemy
-            ? sprites.enemy4_bomb[frame_display]
-            : sprites.enemy2_bomb[frame_display]
-            ;
+        int frame_display = fx[i].frame / 8;
 
-        int x = fx[i].x - (al_get_bitmap_width(bmp) / 2);
-        int y = fx[i].y - (al_get_bitmap_height(bmp) / 2);
-        al_draw_bitmap(bmp, x, y, 0);
+        ALLEGRO_BITMAP* bmp =
+            (fx[i].enemy == 0) ? sprites.enemy2_bomb[frame_display] :
+            (fx[i].enemy == 1) ? sprites.enemy4_bomb[frame_display] :
+            (fx[i].enemy == 2) ? sprites.razer_before_fx :
+            (fx[i].enemy == 3) ? sprites.razer_fx[frame_display] :
+            (fx[i].enemy == 4) ? sprites.razer_after_fx :
+            NULL; 
+
+        if (bmp) {
+            int x;
+            if (fx[i].enemy > 1)
+                x = 200;
+            else {
+                x = fx[i].x - (al_get_bitmap_width(bmp) / 2);
+            }
+            int y = fx[i].y - (al_get_bitmap_height(bmp) / 2);
+
+            if (fx[i].enemy > 1) {
+                al_draw_scaled_bitmap(bmp, 0, 0, 710, 40, x, y, 800, 10, 0);
+			}
+            else
+                al_draw_bitmap(bmp, x, y, 0);
+        }
     }
 }

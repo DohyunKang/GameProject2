@@ -10,7 +10,7 @@ extern Player p;
 extern SPRITES sprites;
 extern ALLEGRO_FONT* font;
 extern ALLEGRO_FONT* font_l;
-extern ALLEGRO_BITMAP* MAP[8];
+extern ALLEGRO_BITMAP* MAP[10];
 extern int flag_mode;
 extern DORO_s doro;
 
@@ -20,7 +20,7 @@ void score_draw_pre_update(float x, float start_y, float spacing);
 
 
 void map_init() {
-    for (int i = 0; i < 8; ++i) {
+    for (int i = 0; i < 10; ++i) {
         char filename[256];
         snprintf(filename, sizeof(filename), "%d.png", i);
         MAP[i] = al_load_bitmap(filename);

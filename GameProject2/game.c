@@ -259,6 +259,97 @@ int end(queue) {
 
 }
 
+
+int end2(queue) {
+
+    bool done = false;
+    ALLEGRO_EVENT event;
+
+    al_flush_event_queue(queue);
+    memset(key, 0, sizeof(key));
+
+    if (win) // 승리 엔딩
+    {
+        softly_next(9, 0, queue);
+
+        while (1)
+        {
+            al_wait_for_event(queue, &event);
+
+            switch (event.type)
+            {
+            case ALLEGRO_EVENT_TIMER:
+                if (key[ALLEGRO_KEY_1])
+                    done = true;
+
+                if (key[ALLEGRO_KEY_ESCAPE] || key[ALLEGRO_KEY_2]) {
+                    return 1;
+                }
+
+                break;
+
+            case ALLEGRO_EVENT_DISPLAY_CLOSE:
+                return 1;
+            }
+
+            if (done)
+                break;
+
+            keyboard_update(&event);
+
+            if (al_is_event_queue_empty(queue))
+            {
+                disp_pre_draw();
+                al_clear_to_color(al_map_rgb(0, 0, 0));
+                background(9);  // 승리 엔딩 화면 출력, 타이틀 돌아가기 or 게임 종료 선택
+                disp_post_draw();
+            }
+        }
+    }
+    else // 패배 엔딩  
+    {
+        softly_next(8, 0, queue);
+
+        while (1)
+        {
+            al_wait_for_event(queue, &event);
+
+            switch (event.type)
+            {
+            case ALLEGRO_EVENT_TIMER:
+                if (key[ALLEGRO_KEY_1])
+                    done = true;
+
+                if (key[ALLEGRO_KEY_ESCAPE] || key[ALLEGRO_KEY_2]) {
+                    return 1;
+                }
+
+                break;
+
+            case ALLEGRO_EVENT_DISPLAY_CLOSE:
+                return 1;
+            }
+
+            if (done)
+                break;
+
+            keyboard_update(&event);
+
+            if (al_is_event_queue_empty(queue))
+            {
+                disp_pre_draw();
+                al_clear_to_color(al_map_rgb(0, 0, 0));
+                background(8);  // 패배 엔딩 화면 출력, 타이틀 돌아가기 or 게임 종료 선택
+                disp_post_draw();
+            }
+        }
+    }
+
+    return 0;
+
+
+}
+
 int main()
 {
     must_init(al_init(), "allegro");
@@ -407,7 +498,9 @@ int main()
 
 
         }
-        if (end(queue)) // if return 1 >> end game
+        if (flag_mode == 1 && end(queue)) // if return 1 >> end game
+            break;
+        else if (flag_mode == 2 && end2(queue))
             break;
 
     }
