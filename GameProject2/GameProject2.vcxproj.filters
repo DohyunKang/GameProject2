@@ -92,6 +92,9 @@
     <Image Include="..\..\..\..\Users\한국전파진흥협회\Downloads\razer_fx1-Photoroom.png">
       <Filter>리소스 파일</Filter>
     </Image>
+    <Image Include="razer_IMG.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">

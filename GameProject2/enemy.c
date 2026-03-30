@@ -244,7 +244,7 @@ void enemy2_update(void)
             int cx = (int)(enemy2[i].x + ENEMY_W[ENEMY_BOMB] / 2);
             int cy = (int)(enemy2[i].y + ENEMY_H[ENEMY_BOMB] / 2);
             al_play_sample(enemy_explode[0], 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
-            fx_add(false, cx, cy);
+            fx_add(0, cx, cy);
             enemy3_add(cx, cy);
             enemy2[i].active = false;
         }
@@ -434,7 +434,7 @@ void enemy4_update(float player_x, float player_y)
         if (enemy4[i].timer <= 0)
         {
             al_play_sample(enemy_explode[1], 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
-            fx_add(true, enemy4[i].x, enemy4[i].y);
+            fx_add(1, enemy4[i].x, enemy4[i].y);
             enemy4[i].active = false;
             continue;
         }
@@ -517,3 +517,5 @@ bool enemies_collide(int stage, int x, int y, int w, int h)
 
     return false;
 }
+
+// fx_add(2, x,y) , fx_add(3,x,y),  razer_darw(), fx_add(4,x,y)

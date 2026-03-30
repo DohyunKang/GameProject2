@@ -167,6 +167,7 @@
     <Image Include="doro.png" />
     <Image Include="doro_m.png" />
     <Image Include="GameIMG.png" />
+    <Image Include="razer_IMG.png" />
     <Image Include="spritesheet.png" />
   </ItemGroup>
   <ItemGroup>

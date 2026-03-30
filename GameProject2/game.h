@@ -25,9 +25,6 @@
 #define DISP_W (BUFFER_W * DISP_SCALE)
 #define DISP_H (BUFFER_H * DISP_SCALE)
 
-#define ENEMY2_FX_FRAMES 5
-#define ENEMY4_FX_FRAMES 5
-
 /* -------------------- game state -------------------- */
 
 typedef enum {
@@ -97,9 +94,14 @@ extern const int ENEMY_H[ENEMY_TYPE_N];
 #define ENEMY_FIREBALL_H   (ENEMY_H[ENEMY_FIREBALL])
 #define ENEMY_HOMING_W     (ENEMY_W[ENEMY_HOMING])
 #define ENEMY_HOMING_H     (ENEMY_H[ENEMY_HOMING])
+#define ENEMY_RAZER_W      (710)
+#define ENEMY_RAZER_H      (58)
 
 #define ENEMY2_FX_FRAMES 5
 #define ENEMY4_FX_FRAMES 5
+#define ENEMY_BEFORE_RAZER_FRAMES 1
+#define ENEMY_RAZER_FRAMES 5
+#define ENEMY_AFTER_RAZER_FRAMES 1
 /*
 // 게임의 현재 흐름을 제어하는 상태 (메뉴, 게임 중, 결과창 등)
 typedef enum {
@@ -153,7 +155,7 @@ typedef struct FX
 {
     int x, y;
     int frame;
-    bool enemy;
+    int enemy;
     bool used;
 } FX;
 
@@ -204,6 +206,12 @@ typedef struct SPRITES
     // 폭발
     ALLEGRO_BITMAP* enemy2_bomb[ENEMY2_FX_FRAMES];
     ALLEGRO_BITMAP* enemy4_bomb[ENEMY4_FX_FRAMES];
+
+    // 레이저
+    ALLEGRO_BITMAP* enemy_razer;
+    ALLEGRO_BITMAP* razer_before_fx;
+    ALLEGRO_BITMAP* razer_fx[ENEMY_RAZER_FRAMES];
+    ALLEGRO_BITMAP* razer_after_fx;
 } SPRITES;
 
 
@@ -283,7 +291,7 @@ void audio_init();
 void audio_deinit();
 
 void fx_init();
-void fx_add(bool enemy, int x, int y);
+void fx_add(int enemy, int x, int y);
 void fx_update();
 void fx_draw();
 
