@@ -15,32 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="game.c">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="player.c">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="share.c">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="enemy.c">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="background.c">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="doro.c">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="ex.c">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="fx.c">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
     <None Include="explode1.flac">
       <Filter>리소스 파일</Filter>
@@ -51,6 +25,32 @@
     <None Include="shot.flac">
       <Filter>리소스 파일</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ex.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="game.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="share.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="background.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="enemy.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="doro.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="fx.c">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="spritesheet.png">
@@ -74,13 +74,13 @@
     <Image Include="5.png">
       <Filter>리소스 파일</Filter>
     </Image>
+    <Image Include="GameIMG.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
     <Image Include="doro.png">
       <Filter>리소스 파일</Filter>
     </Image>
     <Image Include="doro_m.png">
-      <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="GameIMG.png">
       <Filter>리소스 파일</Filter>
     </Image>
   </ItemGroup>
@@ -88,5 +88,10 @@
     <ClInclude Include="game.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="font_1.ttf">
+      <Filter>리소스 파일</Filter>
+    </Font>
   </ItemGroup>
 </Project>

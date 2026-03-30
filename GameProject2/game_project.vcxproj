@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{2c2ead5d-635a-4222-8787-a148e4877683}</ProjectGuid>
-    <RootNamespace>GameProject2</RootNamespace>
+    <ProjectGuid>{c190c971-936b-4780-b250-787276ea6d41}</ProjectGuid>
+    <RootNamespace>gameproject</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -70,13 +70,6 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <Allegro_AddonImage>true</Allegro_AddonImage>
-    <Allegro_AddonPrimitives>true</Allegro_AddonPrimitives>
-    <Allegro_AddonAudio>true</Allegro_AddonAudio>
-    <Allegro_AddonAcodec>true</Allegro_AddonAcodec>
-    <Allegro_AddonFont>true</Allegro_AddonFont>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Allegro_AddonImage>true</Allegro_AddonImage>
     <Allegro_AddonPrimitives>true</Allegro_AddonPrimitives>
@@ -84,6 +77,7 @@
     <Allegro_AddonAcodec>true</Allegro_AddonAcodec>
     <Allegro_AddonFont>true</Allegro_AddonFont>
     <Allegro_AddonTTF>true</Allegro_AddonTTF>
+    <Allegro_AddonColor>true</Allegro_AddonColor>
     <Allegro_AddonVideo>true</Allegro_AddonVideo>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -139,20 +133,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="explode1.flac" />
+    <None Include="explode2.flac" />
+    <None Include="packages.config" />
+    <None Include="shot.flac" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="background.c" />
     <ClCompile Include="doro.c" />
     <ClCompile Include="enemy.c" />
     <ClCompile Include="ex.c" />
     <ClCompile Include="fx.c" />
     <ClCompile Include="game.c" />
-    <ClCompile Include="player.c" />
     <ClCompile Include="share.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="explode1.flac" />
-    <None Include="explode2.flac" />
-    <None Include="packages.config" />
-    <None Include="shot.flac" />
+    <ClCompile Include="Player.c" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="0.png" />
@@ -168,6 +162,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="font_1.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

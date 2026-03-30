@@ -1,8 +1,10 @@
 #include "game.h"
 #define DISP_W BUFFER_W * DISP_SCALE            // 게임 화면의 실제 가로 너비
 #define DISP_H BUFFER_H * DISP_SCALE            // 게임 화면의 실제 세로 너비
-
 // --- general ---
+extern unsigned char key[ALLEGRO_KEY_MAX];
+extern SPRITES sprites;
+
 void must_init(bool test, const char* description)
 {
     if (test) return;
@@ -73,7 +75,6 @@ void disp_post_draw()
 
 #define KEY_SEEN     1
 #define KEY_DOWN     2
-unsigned char key[ALLEGRO_KEY_MAX];
 
 void keyboard_init()
 {
@@ -97,23 +98,115 @@ void keyboard_update(ALLEGRO_EVENT* event)
         break;
     }
 }
-
-
 // --- sprites ---
 
 
-typedef struct SPRITES
+ALLEGRO_BITMAP* sprite_grab(int x, int y, int w, int h)
 {
-    ALLEGRO_BITMAP* _sheet;
+    ALLEGRO_BITMAP* sprite = al_create_sub_bitmap(sprites._sheet, x, y, w, h);
+    must_init(sprite, "sprite grab");
+    return sprite;
+}
 
-    ALLEGRO_BITMAP* player;
-    ALLEGRO_BITMAP* life;
+void sprites_init(void)
+{
+    sprites._sheet = al_load_bitmap("GameIMG.png");
+    must_init(sprites._sheet, "spritesheet");
 
-    ALLEGRO_BITMAP* enemy[3];
+    /* player: [gender][state][dir] */
 
-} SPRITES;
-SPRITES sprites;
+    /* male */
+    sprites.player[0][0][0] = sprite_grab(15, 11, PLAYER1_W, PLAYER1_H);
+    sprites.player[0][0][1] = sprite_grab(55, 12, PLAYER1_W, PLAYER1_H);
 
+    sprites.player[0][1][0] = sprite_grab(2, 82, PLAYER2_W, PLAYER2_H);
+    sprites.player[0][1][1] = sprite_grab(52, 83, PLAYER2_W, PLAYER2_H);
+    
+    sprites.player[0][2][0] = sprite_grab(242, 11, PLAYER3_W, PLAYER3_H);
+    sprites.player[0][2][1] = sprite_grab(185, 10, PLAYER3_W, PLAYER3_H);
+
+    /* female */
+    sprites.player[1][0][0] = sprite_grab(100, 11, PLAYER1_W, PLAYER1_H);
+    sprites.player[1][0][1] = sprite_grab(140, 10, PLAYER1_W, PLAYER1_H);
+
+    sprites.player[1][1][0] = sprite_grab(98, 80, PLAYER2_W, PLAYER2_H);
+    sprites.player[1][1][1] = sprite_grab(145, 80, PLAYER2_W, PLAYER2_H);
+
+    sprites.player[1][2][0] = sprite_grab(240, 78, PLAYER3_W, PLAYER3_H);
+    sprites.player[1][2][1] = sprite_grab(185, 78, PLAYER3_W, PLAYER3_H);
+
+    /* item */
+    sprites.item[ITEM_HEART] = sprite_grab(203, 155, ITEM_HEART_W, ITEM_HEART_H);
+    sprites.item[ITEM_BARRIER] = sprite_grab(243, 151, ITEM_BARRIER_W, ITEM_BARRIER_H);
+    sprites.item[ITEM_TREASURE_CHEST] = sprite_grab(282, 153, ITEM_TREASURE_CHEST_W, ITEM_TREASURE_CHEST_H);
+
+    /* enemy */
+    sprites.enemy[ENEMY_SPEAR] = sprite_grab(52, 154, ENEMY_SPEAR_W, ENEMY_SPEAR_H);
+    sprites.enemy[ENEMY_BOMB] = sprite_grab(84, 145, ENEMY_BOMB_W, ENEMY_BOMB_H);
+    sprites.enemy[ENEMY_FIREBALL] = sprite_grab(131, 153, ENEMY_FIREBALL_W, ENEMY_FIREBALL_H);
+    sprites.enemy[ENEMY_HOMING] = sprite_grab(160, 150, ENEMY_HOMING_W, ENEMY_HOMING_H);
+
+    /* fx */
+    sprites.enemy2_bomb[0] = sprite_grab(6, 194, 38, 40);
+    sprites.enemy2_bomb[1] = sprite_grab(46, 192, 54, 42);
+    sprites.enemy2_bomb[2] = sprite_grab(102, 190, 40, 44);
+    sprites.enemy2_bomb[3] = sprite_grab(146, 187, 33, 47);
+    sprites.enemy2_bomb[4] = sprite_grab(182, 187, 34, 47);
+
+    sprites.enemy4_bomb[0] = sprite_grab(228, 195, 40, 36);
+    sprites.enemy4_bomb[1] = sprite_grab(273, 197, 36, 35);
+    sprites.enemy4_bomb[2] = sprite_grab(9, 246, 34, 30);
+    sprites.enemy4_bomb[3] = sprite_grab(50, 246, 35, 37);
+    sprites.enemy4_bomb[4] = sprite_grab(90, 240, 30, 47);
+}
+
+void sprites_deinit(void)
+{
+    for (int gender = 0; gender < 2; gender++) {
+        for (int state = 0; state < 3; state++) {
+            for (int dir = 0; dir < 2; dir++) {
+                if (sprites.player[gender][state][dir]) {
+                    al_destroy_bitmap(sprites.player[gender][state][dir]);
+                    sprites.player[gender][state][dir] = NULL;
+                }
+            }
+        }
+    }
+
+    for (int i = 0; i < ITEM_TYPE_N; i++) {
+        if (sprites.item[i]) {
+            al_destroy_bitmap(sprites.item[i]);
+            sprites.item[i] = NULL;
+        }
+    }
+
+    for (int i = 0; i < ENEMY_TYPE_N; i++) {
+        if (sprites.enemy[i]) {
+            al_destroy_bitmap(sprites.enemy[i]);
+            sprites.enemy[i] = NULL;
+        }
+    }
+
+    for (int i = 0; i < ENEMY2_FX_FRAMES; i++) {
+        if (sprites.enemy2_bomb[i]) {
+            al_destroy_bitmap(sprites.enemy2_bomb[i]);
+            sprites.enemy2_bomb[i] = NULL;
+        }
+    }
+
+    for (int i = 0; i < ENEMY4_FX_FRAMES; i++) {
+        if (sprites.enemy4_bomb[i]) {
+            al_destroy_bitmap(sprites.enemy4_bomb[i]);
+            sprites.enemy4_bomb[i] = NULL;
+        }
+    }
+
+    if (sprites._sheet) {
+        al_destroy_bitmap(sprites._sheet);
+        sprites._sheet = NULL;
+    }
+}
+/*
 ALLEGRO_BITMAP* sprite_grab(int x, int y, int w, int h)
 {
     ALLEGRO_BITMAP* sprite = al_create_sub_bitmap(sprites._sheet, x, y, w, h);
@@ -123,59 +216,70 @@ ALLEGRO_BITMAP* sprite_grab(int x, int y, int w, int h)
 
 void sprites_init()
 {
-    sprites._sheet = al_load_bitmap("spritesheet.png");
+    sprites._sheet = al_load_bitmap("GameIMG.png");
     must_init(sprites._sheet, "spritesheet");
 
-    sprites.player = sprite_grab(0, 0, PLAYER_W, PLAYER_H);
+    // 남자
+    sprites.player[0][0][0] = sprite_grab(5, 10, PLAYER1_W, PLAYER1_H);
+    sprites.player[0][0][1] = sprite_grab(48, 10, PLAYER1_W, PLAYER1_H);
 
-    sprites.life = sprite_grab(0, 14, HP_W, HP_H);
+    sprites.player[0][1][0] = sprite_grab(10, 82, PLAYER2_W, PLAYER2_H);
+    sprites.player[0][1][1] = sprite_grab(45, 78, PLAYER2_W, PLAYER2_H);
 
-    sprites.alien[0] = sprite_grab(19, 0, ALIEN_BUG_W, ALIEN_BUG_H);
-    sprites.alien[1] = sprite_grab(19, 10, ALIEN_ARROW_W, ALIEN_ARROW_H);
-    sprites.alien[2] = sprite_grab(0, 21, ALIEN_THICCBOI_W, ALIEN_THICCBOI_H);
+    sprites.player[0][2][0] = sprite_grab(178, 80, PLAYER3_W, PLAYER3_H);
+    sprites.player[0][2][1] = sprite_grab(230, 80, PLAYER3_W, PLAYER3_H);
 
-    /*
-    sprites.explosion[0] = sprite_grab(33, 10, 9, 9);
-    sprites.explosion[1] = sprite_grab(43, 9, 11, 11);
-    sprites.explosion[2] = sprite_grab(46, 21, 17, 18);
-    sprites.explosion[3] = sprite_grab(46, 40, 17, 17);
-   
+    //여자
+    sprites.player[1][0][0] = sprite_grab(95, 10, PLAYER1_W, PLAYER1_H);
+    sprites.player[1][0][1] = sprite_grab(140, 8, PLAYER1_W, PLAYER1_H);
 
-    sprites.sparks[0] = sprite_grab(34, 0, 10, 8);
-    sprites.sparks[1] = sprite_grab(45, 0, 7, 8);
-    sprites.sparks[2] = sprite_grab(54, 0, 9, 8);
-    */
+    sprites.player[1][1][0] = sprite_grab(92, 81, PLAYER2_W, PLAYER2_H);
+    sprites.player[1][1][1] = sprite_grab(138, 80, PLAYER2_W, PLAYER2_H);
+
+    sprites.player[1][2][0] = sprite_grab(178, 5, PLAYER3_W, PLAYER3_H);
+    sprites.player[1][2][1] = sprite_grab(228, 5, PLAYER3_W, PLAYER3_H);
+
+    // 아이템 (하트, 베리어, 보물 순)
+    sprites.item[0] = sprite_grab(4, 200, ITEM1_W, ITEM1_H);
+    sprites.item[1] = sprite_grab(52, 196, ITEM2_W, ITEM2_H);
+    sprites.item[2] = sprite_grab(10, 155, ITEM3_W, ITEM3_H);
+
+    // 적
+    sprites.enemy[0] = sprite_grab(67, 155, ENEMY_DAGGER_W, ENEMY_DAGGER_H);
+    sprites.enemy[1] = sprite_grab(105, 145, ENEMY_BOMB_W, ENEMY_BOMB_H);
+    sprites.enemy[2] = sprite_grab(167, 154, ENEMY_FIREBALL_W, ENEMY_FIREBALL_H);
+    sprites.enemy[3] = sprite_grab(212, 148, ENEMY_HOMING_W, ENEMY_HOMING_H);
 }
 
 void sprites_deinit()
 {
-    al_destroy_bitmap(sprites.player);
+    al_destroy_bitmap(sprites.player[0][0][0]);
+    al_destroy_bitmap(sprites.player[0][0][1]);
+    al_destroy_bitmap(sprites.player[0][1][0]);
+    al_destroy_bitmap(sprites.player[0][1][1]);
+    al_destroy_bitmap(sprites.player[0][2][0]);
+    al_destroy_bitmap(sprites.player[0][2][1]);
+    al_destroy_bitmap(sprites.player[1][0][0]);
+    al_destroy_bitmap(sprites.player[1][0][1]);
+    al_destroy_bitmap(sprites.player[1][1][0]);
+    al_destroy_bitmap(sprites.player[1][1][1]);
+    al_destroy_bitmap(sprites.player[1][2][0]);
+    al_destroy_bitmap(sprites.player[1][2][1]);
 
-    al_destroy_bitmap(sprites.life);
+    al_destroy_bitmap(sprites.enemy[0]);
+    al_destroy_bitmap(sprites.enemy[1]);
+    al_destroy_bitmap(sprites.enemy[2]);
+    al_destroy_bitmap(sprites.enemy[3]);
 
-    al_destroy_bitmap(sprites.alien[0]);
-    al_destroy_bitmap(sprites.alien[1]);
-    al_destroy_bitmap(sprites.alien[2]);
-
-    al_destroy_bitmap(sprites.alien_shot);
-    
-    /*
-    al_destroy_bitmap(sprites.explosion[0]);
-    al_destroy_bitmap(sprites.explosion[1]);
-    al_destroy_bitmap(sprites.explosion[2]);
-    al_destroy_bitmap(sprites.explosion[3]);
-
-    al_destroy_bitmap(sprites.sparks[0]);
-    al_destroy_bitmap(sprites.sparks[1]);
-    al_destroy_bitmap(sprites.sparks[2]);
-    */
+    al_destroy_bitmap(sprites.item[0]);
+    al_destroy_bitmap(sprites.item[1]);
+    al_destroy_bitmap(sprites.item[2]);
 
     al_destroy_bitmap(sprites._sheet);
 }
-
-
+*/
 // --- audio ---
-
+/*
 ALLEGRO_SAMPLE* sample_shot;
 ALLEGRO_SAMPLE* sample_explode[2];
 
@@ -199,77 +303,4 @@ void audio_deinit()
     al_destroy_sample(sample_shot);
     al_destroy_sample(sample_explode[0]);
     al_destroy_sample(sample_explode[1]);
-}
-
-
-// --- fx ---
-
-typedef struct FX
-{
-    int x, y;
-    int frame;
-    bool spark;
-    bool used;
-} FX;
-
-void fx_init()
-{
-    for (int i = 0; i < FX_N; i++)
-        fx[i].used = false;
-}
-
-void fx_add(bool spark, int x, int y)
-{
-    if (!spark)
-        al_play_sample(sample_explode[between(0, 2)], 0.75, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
-
-    for (int i = 0; i < FX_N; i++)
-    {
-        if (fx[i].used)
-            continue;
-
-        fx[i].x = x;
-        fx[i].y = y;
-        fx[i].frame = 0;
-        fx[i].spark = spark;
-        fx[i].used = true;
-        return;
-    }
-}
-
-void fx_update()
-{
-    for (int i = 0; i < FX_N; i++)
-    {
-        if (!fx[i].used)
-            continue;
-
-        fx[i].frame++;
-
-        if ((!fx[i].spark && (fx[i].frame == (EXPLOSION_FRAMES * 2)))
-            || (fx[i].spark && (fx[i].frame == (SPARKS_FRAMES * 2)))
-            )
-            fx[i].used = false;
-    }
-}
-
-void fx_draw()
-{
-    for (int i = 0; i < FX_N; i++)
-    {
-        if (!fx[i].used)
-            continue;
-
-        int frame_display = fx[i].frame / 2;
-        ALLEGRO_BITMAP* bmp =
-            fx[i].spark
-            ? sprites.sparks[frame_display]
-            : sprites.explosion[frame_display]
-            ;
-
-        int x = fx[i].x - (al_get_bitmap_width(bmp) / 2);
-        int y = fx[i].y - (al_get_bitmap_height(bmp) / 2);
-        al_draw_bitmap(bmp, x, y, 0);
-    }
-}
-
+}*/
