@@ -144,8 +144,7 @@ void sprites_init(void)
     sprites.enemy[ENEMY_SPEAR] = sprite_grab(52, 154, ENEMY_SPEAR_W, ENEMY_SPEAR_H);
     sprites.enemy[ENEMY_BOMB] = sprite_grab(84, 145, ENEMY_BOMB_W, ENEMY_BOMB_H);
     sprites.enemy[ENEMY_FIREBALL] = sprite_grab(131, 153, ENEMY_FIREBALL_W, ENEMY_FIREBALL_H);
-    sprites.enemy[ENEMY_HOMING] = sprite_grab(160, 150, ENEMY_HOMING_W, ENEMY_HOMING_H);
-
+    sprites.enemy[ENEMY_HOMING] = sprite_grab(165, 151, ENEMY_HOMING_W, ENEMY_HOMING_H);
     /* fx */
     sprites.enemy2_bomb[0] = sprite_grab(6, 194, 38, 40);
     sprites.enemy2_bomb[1] = sprite_grab(46, 192, 54, 42);
@@ -158,6 +157,10 @@ void sprites_init(void)
     sprites.enemy4_bomb[2] = sprite_grab(9, 246, 34, 30);
     sprites.enemy4_bomb[3] = sprite_grab(50, 246, 35, 37);
     sprites.enemy4_bomb[4] = sprite_grab(90, 240, 30, 47);
+
+    /*∑π¿Ã¿˙*/
+    sprites.enemy5_pre = sprite_grab(185, 78, PLAYER3_W, PLAYER3_H);
+    sprites.enemy5_act = sprite_grab(185, 78, PLAYER3_W, PLAYER3_H);
 }
 
 void sprites_deinit(void)

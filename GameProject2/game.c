@@ -4,7 +4,7 @@ GAME_STATE state = STATE_MENU;  // 초기 상태는 메뉴 화면
 GAME_MODE mode = MODE_STORY;    // 기본 모드는 스토리 모드
 const int ITEM_W[] = { 27, 30, 36 };
 const int ITEM_H[] = { 26, 30, 24 };
-const int PLAYER_W[] = { 34, 43, 54 };
+const int PLAYER_W[] = { 34, 41, 54 };
 const int PLAYER_H[] = { 57, 50, 57 };
 const int ENEMY_W[] = { 27, 40, 23, 30 };
 const int ENEMY_H[] = { 25, 37, 25, 30 };
@@ -120,8 +120,20 @@ int title(queue) {
             disp_pre_draw();
             al_clear_to_color(al_map_rgb(0, 0, 0));
             //background(xxx);  // 캐릭터 선택화면 추가??
-            al_draw_textf(font_l, al_map_rgb_f(1, 1, 1), 400, 400, 0, "1 : male\n 2 : female");
+            // al_draw_textf(font_l, al_map_rgb_f(1, 1, 1), 400, 400, 0, "1 : male\n 2 : female");
+            ALLEGRO_BITMAP* charSelectImg = al_load_bitmap("Character_Select.png");
 
+            if (!charSelectImg) {
+                // 이미지 로드 실패 시 예외 처리
+                return -1;
+            }
+
+            // 화면을 지우고 이미지를 (0, 0) 좌표에 그리기
+            al_clear_to_color(al_map_rgb(0, 0, 0));
+            al_draw_bitmap(charSelectImg, 0, 0, 0);
+
+            // 버퍼의 내용을 실제 화면에 갱신
+            al_flip_display();
             disp_post_draw();
         }
     }
@@ -260,7 +272,7 @@ int main()
     must_init(queue, "queue");
 
     disp_init();
-    //audio_init();
+    audio_init();
 
     must_init(al_init_image_addon(), "image");
     sprites_init();
@@ -271,10 +283,12 @@ int main()
     hud_init();
     must_init(al_init_primitives_addon(), "primitives");
 
-    //must_init(al_install_audio(), "audio");
-    //must_init(al_init_acodec_addon(), "audio codecs");
-    //must_init(al_reserve_samples(16), "reserve samples");
-
+    must_init(al_install_audio(), "audio");
+    must_init(al_init_acodec_addon(), "audio codecs");
+    must_init(al_reserve_samples(16), "reserve samples");
+    if (!al_reserve_samples(16)) {
+        fprintf(stderr, "failed to reserve samples!\n");
+    }
     al_register_event_source(queue, al_get_keyboard_event_source());
     al_register_event_source(queue, al_get_display_event_source(disp));
     al_register_event_source(queue, al_get_timer_event_source(timer));
@@ -375,6 +389,7 @@ int main()
                         enemy4_draw();
                     fx_draw();
                     item_draw();
+                    addprofile();
                     hud_draw(); //시간, 보물상자수, 스테이지 현황 출력
                     // 변경사항 반영, 출력
                     disp_post_draw();
@@ -399,7 +414,7 @@ int main()
 
     sprites_deinit();
     hud_deinit();
-    //audio_deinit();
+    audio_deinit();
     disp_deinit();
     al_destroy_timer(timer);
     al_destroy_event_queue(queue);

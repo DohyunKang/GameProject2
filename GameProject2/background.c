@@ -10,7 +10,7 @@ extern Player p;
 extern SPRITES sprites;
 extern ALLEGRO_FONT* font;
 extern ALLEGRO_FONT* font_l;
-extern ALLEGRO_BITMAP* MAP[6];
+extern ALLEGRO_BITMAP* MAP[8];
 extern int flag_mode;
 extern DORO_s doro;
 
@@ -20,7 +20,7 @@ void score_draw_pre_update(float x, float start_y, float spacing);
 
 
 void map_init() {
-    for (int i = 0; i < 6; ++i) {
+    for (int i = 0; i < 8; ++i) {
         char filename[256];
         snprintf(filename, sizeof(filename), "%d.png", i);
         MAP[i] = al_load_bitmap(filename);
@@ -32,7 +32,17 @@ void map_init() {
     }
 }
 
+void addprofile() {
 
+    if (p.gender == 1) {
+        al_draw_scaled_bitmap(MAP[6], 0, 0, al_get_bitmap_width(MAP[6]), al_get_bitmap_height(MAP[6]), 0, 0, 100, 100, 0);
+    }
+
+    if (p.gender == 2) {
+        al_draw_scaled_bitmap(MAP[7], 0, 0, al_get_bitmap_width(MAP[7]), al_get_bitmap_height(MAP[7]), 0, 0, 100, 100, 0);
+    }
+}
+/*
 void background(int n)
 {
     al_clear_to_color(al_map_rgb(0, 0, 0));
@@ -55,6 +65,68 @@ void background(int n)
     if (n == 5) {
         al_draw_text(font_l, al_map_rgb(255, 255, 255), 600, 40, ALLEGRO_ALIGN_CENTER, "- HALL OF FAME -");
         score_draw_at(300, 185, 50); // 여기서 한 번만 출력
+    }
+}
+*/
+
+
+void background(int n)
+{
+    static int last_bgm_n = -1; //이전 BGM 번호를 저장하는 정적 변수
+    static ALLEGRO_SAMPLE_INSTANCE* current_inst = NULL; //초기화된 샘플 인스턴스 포인터
+    static ALLEGRO_SAMPLE* current_sample = NULL; // 현재 로드된 샘플 포인터
+
+    if (n != last_bgm_n) {
+        // 기존 곡이 있다면 정지 및 메모리 해제
+        if (current_inst) {
+            al_stop_sample_instance(current_inst);
+            al_destroy_sample_instance(current_inst);
+        }
+        if (current_sample) {
+            al_destroy_sample(current_sample);
+        }
+
+        // 새로운 곡 로드
+        char bgm_name[32];
+        sprintf(bgm_name, "bgm_%d.ogg", n);
+
+        current_sample = al_load_sample(bgm_name);
+
+        if (current_sample) {
+            current_inst = al_create_sample_instance(current_sample);
+            al_set_sample_instance_playmode(current_inst, ALLEGRO_PLAYMODE_LOOP);
+            al_attach_sample_instance_to_mixer(current_inst, al_get_default_mixer());
+            al_play_sample_instance(current_inst);
+            printf("BGM %d 재생 시작\n", n); // 디버깅용 로그
+        }
+        else {
+            printf("BGM %s 로드 실패! 경로를 확인하세요.\n", bgm_name);
+        }
+
+        last_bgm_n = n;
+    }
+
+    al_clear_to_color(al_map_rgb(0, 0, 0));
+
+    int screen_width = 1200;
+    int screen_height = 900;
+    float img_width = al_get_bitmap_width(MAP[n]);
+    float img_height = al_get_bitmap_height(MAP[n]);
+
+    al_draw_scaled_bitmap(MAP[n], 0, 0, img_width, img_height, 0, 0, screen_width, screen_height, 0);
+
+    // 4번 화면: 이름 입력 및 실시간 랭킹 (파일 기반)
+    if (n == 4) {
+        score_draw_pre_update(660, 260, 48.8);
+        al_draw_text(font_l, al_map_rgb(255, 255, 255), 600, 170, ALLEGRO_ALIGN_CENTER, "ENTER YOUR NAME");
+        al_draw_textf(font_l, al_map_rgb(255, 255, 0), 600, 760, ALLEGRO_ALIGN_CENTER, "%s_", input_name);
+    }
+
+    // 5번 화면: 최종 결과창 (메모리 기반)
+    if (n == 5) {
+        al_draw_text(font_l, al_map_rgb(255, 255, 255), 600, 40, ALLEGRO_ALIGN_CENTER, "- HALL OF FAME -");
+        al_draw_text(font, al_map_rgb(255, 255, 255), 225, 148, ALLEGRO_ALIGN_LEFT, "- RANK -");
+        score_draw_at(300, 195, 50); // 여기서 한 번만 출력
     }
 }
 
@@ -258,64 +330,3 @@ void hud_draw()
 
 }
 
-
-//--------------------------------
-
-/*
-void background(int n)
-{
-    if (!al_init())
-    {
-        printf("couldn't initialize allegro\n");
-        return;
-    }
-    char filename[256];
-    snprintf(filename, sizeof(filename), "%d.png", n);
-    ALLEGRO_BITMAP* image = al_load_bitmap(filename);
-
-    if (!image) {
-        printf("couldn't load images : %s\n", filename);
-        return;
-    }
-    int screen_width = 1200;
-    int screen_height = 900;
-    float img_width = al_get_bitmap_width(image);
-    float img_height = al_get_bitmap_height(image);
-    al_clear_to_color(al_map_rgb(0, 0, 0));
-
-    al_init_primitives_addon();
-
-    al_draw_scaled_bitmap(image, 0, 0, img_width, img_height, 0, 0, screen_width, screen_height, 0);
-
-    if ((n == 1) || (n == 2) || (n == 3)) {
-        al_draw_filled_rectangle(200, 200, 900, 600, al_map_rgb(0, 0, 0));
-    }
-    ALLEGRO_BITMAP* ingame_male = al_load_bitmap("ingame_male.png");
-    if (!ingame_male) {
-        printf("couldn't load character image\n");
-        al_destroy_bitmap(image);
-        return;
-    }
-
-    al_draw_scaled_bitmap(ingame_male, 0, 0, al_get_bitmap_width(ingame_male), al_get_bitmap_height(ingame_male), 0, 0, 150, 150, 0);
-    al_flip_display();
-    //al_destroy_bitmap(image);
-}
-*/
-
-
-
-
-
-
-/*
-int main() {
-    if (!al_init()) return 1;
-    if (!al_init_image_addon()) return 1;
-    ALLEGRO_DISPLAY* disp = al_create_display(1200, 900);
-    if (!disp) return 1;
-    background(1);
-    al_rest(20.0);
-    al_destroy_display(disp);
-    return 0;
-}*/

@@ -27,6 +27,34 @@
 #define ENEMY2_FX_FRAMES 5
 #define ENEMY4_FX_FRAMES 5
 
+/* 맵 범위 */
+#define MAP_LEFT    200.0f
+#define MAP_RIGHT   1000.0f
+#define MAP_TOP     200.0f
+#define MAP_BOTTOM  800.0f
+
+/* 적 개수 */
+#define ENEMY1_N 8
+#define ENEMY2_N 3
+#define ENEMY3_N 64
+#define ENEMY4_N 3
+#define ENEMY5_N 5
+
+#define ENEMY5_W 20
+/* 적 속도 및 주기 */
+#define ENEMY1_SPEED         4.0f
+#define ENEMY1_SPAWN_CYCLE   15     // ex) 45 / 60 = 0.75초마다 생성
+
+#define ENEMY2_SPAWN_CYCLE   60
+#define ENEMY2_TIMER         240    // ex) 240 / 60frame = 4초 뒤에 폭발
+
+#define ENEMY3_SPEED         4.0f
+
+#define ENEMY4_SPEED         3.0f
+#define ENEMY4_SPAWN_CYCLE   60     // ex) 60 / 60 = 1초마다 생성
+#define ENEMY4_TIMER         180    // ex) 180 / 60frame = 3초 뒤에 폭발
+
+
 /* -------------------- game state -------------------- */
 
 typedef enum {
@@ -203,12 +231,20 @@ typedef struct SPRITES
     // 폭발
     ALLEGRO_BITMAP* enemy2_bomb[ENEMY2_FX_FRAMES];
     ALLEGRO_BITMAP* enemy4_bomb[ENEMY4_FX_FRAMES];
+
+    //레이저
+    ALLEGRO_BITMAP* enemy5_pre;
+    ALLEGRO_BITMAP* enemy5_act;
 } SPRITES;
 
+ALLEGRO_SAMPLE* enemy_explode[3];
+ALLEGRO_SAMPLE* item[3];
+ALLEGRO_SAMPLE* death[2];
+ALLEGRO_SAMPLE* hit[2];
 
 
 
-ALLEGRO_BITMAP* MAP[6];
+ALLEGRO_BITMAP* MAP[8];
 
 
 // 메뉴 함수 선언
@@ -248,8 +284,16 @@ void enemy3_draw();
 void enemy4_init();
 bool enemy4_add();
 void enemy4_update(float player_x, float player_y);
+void enemy4_updatex(float player_x, float player_y);
 bool enemy4_collide(int x, int y, int w, int h);
 void enemy4_draw();
+
+// enemy5 (보스) 레이저
+void enemy5_init();
+bool enemy5_add();
+void enemy5_update();
+bool enemy5_collide(int x, int y, int w, int h);
+void enemy5_draw();
 
 // hud 함수 선언
 void hud_init();
@@ -283,6 +327,7 @@ void fx_add(bool enemy, int x, int y);
 void fx_update();
 void fx_draw();
 
+void addprofile();
 
 void enemies_init(void);
 bool enemies_collide(int stage, int x, int y, int w, int h);

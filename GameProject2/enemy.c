@@ -16,39 +16,23 @@ extern ALLEGRO_BITMAP* buffer;
 extern Enemy enemy[MAX_ENEMIES];
 extern SPRITES sprites;
 extern long frame;
+
+
+
+
+
+
 /* -------------------- sprite -------------------- */
 
 
 /* -------------------- enemy -------------------- */
 /* 맵 범위 */
-#define MAP_LEFT    200.0f
-#define MAP_RIGHT   1000.0f
-#define MAP_TOP     200.0f
-#define MAP_BOTTOM  800.0f
-
-/* 적 개수 */
-#define ENEMY1_N 8
-#define ENEMY2_N 3
-#define ENEMY3_N 64
-#define ENEMY4_N 3
-
-/* 적 속도 및 주기 */
-#define ENEMY1_SPEED         4.0f
-#define ENEMY1_SPAWN_CYCLE   15     // ex) 45 / 60 = 0.75초마다 생성
-
-#define ENEMY2_SPAWN_CYCLE   60
-#define ENEMY2_TIMER         240    // ex) 240 / 60frame = 4초 뒤에 폭발
-
-#define ENEMY3_SPEED         4.0f
-
-#define ENEMY4_SPEED         3.0f
-#define ENEMY4_SPAWN_CYCLE   60     // ex) 60 / 60 = 1초마다 생성
-#define ENEMY4_TIMER         180    // ex) 180 / 60frame = 3초 뒤에 폭발
 
 Enemy enemy1[ENEMY1_N];
 Enemy enemy2[ENEMY2_N];
-Enemy enemy3[ENEMY3_N];
+Enemy enemy3[ENEMY3_N*3];
 Enemy enemy4[ENEMY4_N];
+Enemy enemy5[ENEMY5_N];
 
 /* -------------------- 공통 -------------------- */
 // 맴 범위
@@ -464,6 +448,46 @@ bool enemy4_collide(int x, int y, int w, int h)
     return false;
 }
 
+void enemy4_updatex(float player_x, float player_y)
+{
+
+
+    for (int i = 0; i < ENEMY4_N; i++)
+    {
+        if (!enemy4[i].active)
+            continue;
+
+        set_velocity(
+            enemy4[i].x, enemy4[i].y,
+            player_x, player_y,
+            ENEMY4_SPEED,
+            &enemy4[i].dx, &enemy4[i].dy
+        );
+
+        enemy4[i].x += enemy4[i].dx;
+        enemy4[i].y += enemy4[i].dy;
+
+        enemy4[i].timer--;
+        enemy4[i].frame++;
+
+        if (enemy4[i].timer <= 60)
+            enemy4[i].blink++;
+
+        if (enemy4[i].timer <= 0)
+        {
+            fx_add(true, enemy4[i].x, enemy4[i].y);
+            enemy4[i].active = false;
+            continue;
+        }
+
+        if (out_of_map(enemy4[i].x, enemy4[i].y))
+        {
+            enemy4[i].active = false;
+            continue;
+        }
+    }
+}
+
 void enemy4_draw(void)
 {
     for (int i = 0; i < ENEMY4_N; i++)
@@ -486,6 +510,83 @@ void enemy4_draw(void)
     }
 }
 
+
+
+/*-------------------------enemy 5--------------------------------*/
+void enemy5_init() {
+        for (int i = 0; i < ENEMY5_N; i++)
+			enemy5[i].active = false;
+}
+bool enemy5_add() {
+
+    for (int i = 0; i < ENEMY5_N; i++)
+    {
+        if (enemy5[i].active)
+            continue;
+
+        enemy5[i].x = 200;
+        enemy5[i].y = between_f(MAP_TOP, MAP_BOTTOM - ENEMY5_W);
+
+        enemy5[i].timer = 30;
+        enemy5[i].active = true;
+        return true;
+    }
+
+    return false;
+}
+void enemy5_update() {
+    for (int i = 0; i < 4; i++)
+    {
+        if (!enemy5[i].active)
+            continue;
+
+        enemy5[i].timer--;
+
+        if (enemy5[i].timer <= 0)
+        {
+            enemy5[i].active = false;
+            continue;
+        }
+    }
+}
+
+bool enemy5_collide(int x, int y, int w, int h)
+{
+    for (int i = 0; i < ENEMY5_N; i++)
+    {
+        if (!enemy5[i].active)
+            continue;
+
+        int sw = 800;
+        int sh = 20;
+
+        float ex1 = enemy5[i].x;
+        float ey1 = enemy5[i].y;
+        float ex2 = ex1 + sw;
+        float ey2 = ey1 + sh;
+
+        if (collide(x, y, x + w, y + h, ex1, ey1, ex2, ey2))
+        {
+            enemy4[i].active = false;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void enemy5_draw() {
+    for (int i = 0; i < ENEMY5_N; i++)
+    {
+        if (!enemy5[i].active)
+            continue;
+        
+        al_draw_scaled_bitmap(sprites.enemy5_act, 0, 0, PLAYER3_W, PLAYER3_H, enemy5[i].x, enemy5[i].y, 800, 20, 0);
+
+    }
+}
+
+
 /* -------------------- 전체 enemy -------------------- */
 
 void enemies_init(void)
@@ -494,18 +595,21 @@ void enemies_init(void)
     enemy2_init();
     enemy3_init();
     enemy4_init();
+    enemy5_init();
 }
 
 bool enemies_collide(int stage, int x, int y, int w, int h)
 {
-    if (stage >= 1 && enemy1_collide(x, y, w, h))
+    if (enemy1_collide(x, y, w, h))
         return true;
 
-    if (stage >= 2 && enemy3_collide(x, y, w, h))
+    if (enemy3_collide(x, y, w, h))
         return true;
 
-    if (stage >= 3 && enemy4_collide(x, y, w, h))
+    if (enemy4_collide(x, y, w, h))
         return true;
 
+    if (enemy5_collide(x, y, w, h))
+        return true;
     return false;
 }

@@ -139,6 +139,7 @@
     <None Include="shot.flac" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="audio.c" />
     <ClCompile Include="background.c" />
     <ClCompile Include="doro.c" />
     <ClCompile Include="enemy.c" />
@@ -155,9 +156,14 @@
     <Image Include="3.png" />
     <Image Include="4.png" />
     <Image Include="5.png" />
+    <Image Include="6.png" />
+    <Image Include="7.png" />
+    <Image Include="Boss_Clear.png" />
+    <Image Include="Boss_Defeat.png" />
     <Image Include="doro.png" />
     <Image Include="doro_m.png" />
     <Image Include="GameIMG.png" />
+    <Image Include="KakaoTalk_20260330_135810416.png.jpg" />
     <Image Include="spritesheet.png" />
   </ItemGroup>
   <ItemGroup>
@@ -165,6 +171,18 @@
   </ItemGroup>
   <ItemGroup>
     <Font Include="font_1.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="boom_reze.wav" />
+    <Media Include="death1.wav" />
+    <Media Include="death2.wav" />
+    <Media Include="enemy1_3.wav" />
+    <Media Include="enemy2_bomb.wav" />
+    <Media Include="hit1.wav" />
+    <Media Include="hit2.wav" />
+    <Media Include="Item_barrier.wav" />
+    <Media Include="Item_heart.wav" />
+    <Media Include="Item_treasure.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

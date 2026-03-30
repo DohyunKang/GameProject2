@@ -5,8 +5,10 @@ extern long frame;
 extern Player p;
 float sw, sh;
 extern bool win;
+extern Enemy enemy2[ENEMY2_N];
 
 DORO_s doro;
+int flag_l = 0;
 
 #define ALIEN_SHOT_W 12
 #define ALIEN_SHOT_H 12
@@ -40,11 +42,8 @@ struct SPRITES_D
     // attack
     ALLEGRO_BITMAP* attack[2];
 
-
-
     
 } DORO_img;
-
 
 
 
@@ -105,17 +104,25 @@ void shots_draw()
 }
 
 void doro_attack_1() {
-
+    for (int i = 0; i < 3; i++)
+    {
+        enemy5_add();
+    }
+    flag_l = 1;
     return;
 }
 
 void doro_attack_2() {
-
+    for (int i = 0; i < 2; i++){
+        enemy4_add();
+    }
     return;
 }
 
 void doro_attack_draw() {
-
+    enemy3_draw();
+    enemy4_draw();
+    enemy5_draw();
     return;
 }
 
@@ -161,16 +168,20 @@ void doro_draw() {
     sw = al_get_bitmap_width(DORO_img._sheet);
     sh = al_get_bitmap_height(DORO_img._sheet);
 
-    if ((doro.state == DORO_ATTACKING) || (doro.state == DORO_ATTACK_PREP))
-        if (doro.attack == 0)
-            al_draw_scaled_bitmap(DORO_img.attack[0],0, 0, 133, 180,doro.x, doro.y, 133, 180,0);
-        else
+    if ((doro.state == DORO_ATTACKING) || (doro.state == DORO_ATTACK_PREP)) {
+        if (doro.attack == 1)
+            al_draw_scaled_bitmap(DORO_img.attack[0], 0, 0, 133, 180, doro.x, doro.y, 133, 180, 0);
+        else if (doro.attack == 2)
             al_draw_scaled_bitmap(DORO_img.attack[1], 0, 0, 170, 135, doro.x, doro.y, 170, 135, 0);
-    else if (doro.state == DORO_MOVING)
+        else 
+			al_draw_scaled_bitmap(DORO_img.move[0], 0, 0, 170, 135, doro.x, doro.y, 170, 135, 0);
+    }
+    else if (doro.state == DORO_MOVING) {
         if ((frame % 7) > 3)
             al_draw_scaled_bitmap(DORO_img.move[1], 0, 0, 170, 135, doro.x, doro.y, 170, 135, 0);
         else
             al_draw_scaled_bitmap(DORO_img.move[0], 0, 0, 170, 135, doro.x, doro.y, 170, 135, 0);
+    }
     else if (doro.state == DORO_HIT)
         al_draw_scaled_bitmap(DORO_img.hit, 0, 0, 170, 135, doro.x, doro.y, 170, 135, 0);// 피격시
     else
@@ -204,7 +215,7 @@ void doro_update() {
         doro.y += doro.dy;
 
         if (doro.timer <= 0) {
-            doro.timer = 60;        // 정지 후 1초 대기
+            doro.timer = 30;        // 정지 후 1초 대기
             doro.state = DORO_ATTACK_PREP;
         }
         break;
@@ -212,8 +223,9 @@ void doro_update() {
     case DORO_ATTACK_PREP:
         if (doro.timer <= 0) {
             // 공격 1 또는 2 결정
-            doro.attack = rand() % 2;
-            doro.timer = 60;        // 1초 후 공격 수행
+            doro.attack = rand() % 2 + 1;
+            doro.timer = 50;      
+            flag_l = 0;
             doro.state = DORO_ATTACKING;
         }
         break;
@@ -224,15 +236,18 @@ void doro_update() {
         }
         break;
     case DORO_ATTACKING:
-        if (doro.attack == 0) {
-            doro_attack_1();
+        if (doro.attack == 1) {
+            if (flag_l == 0)
+                doro_attack_1();
         }
-        else {
+        if (doro.attack == 2) {
             doro_attack_2();
         }
-
-        doro.timer = 30;
-        doro.state = DORO_IDLE;
+        if (doro.timer <= 0) {
+            doro.attack = 0;
+            doro.timer = 5;
+            doro.state = DORO_IDLE;
+        }
         break;
     }
     //충돌(player)
@@ -280,11 +295,19 @@ void boss_fight_loop(ALLEGRO_EVENT_QUEUE* queue) {
         {
         case ALLEGRO_EVENT_TIMER:
             doro_update();
-            player_update();    //자신 캐릭터
+            
             if (!(frame % 50))
                 shots_add(p.x, p.y);
             shots_update();
             item_update();
+            
+            
+            if (frame % 50 == 0)
+                enemy3_add(doro.x + 85, doro.y + 70);
+            enemy3_update();
+            enemy4_updatex(p.x, p.y);
+            enemy5_update();
+            player_update();    //자신 캐릭터
             hud_update();     //타이머(프레임기반), 먹은 상자, 스테이지 업데이트
 
             if (key[ALLEGRO_KEY_ESCAPE])
@@ -339,6 +362,7 @@ void boss_fight_loop(ALLEGRO_EVENT_QUEUE* queue) {
 
     softly_next(3, 1, queue);
 
-
-
 }
+
+
+
