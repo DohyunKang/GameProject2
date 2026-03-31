@@ -35,11 +35,11 @@ void map_init() {
 void addprofile() {
 
     if (p.gender == 1) {
-        al_draw_scaled_bitmap(MAP[6], 0, 0, al_get_bitmap_width(MAP[6]), al_get_bitmap_height(MAP[6]), 0, 0, 100, 100, 0);
+        al_draw_scaled_bitmap(MAP[6], 0, 0, al_get_bitmap_width(MAP[6]), al_get_bitmap_height(MAP[6]), 0, 0, 180, 180, 0);
     }
 
     if (p.gender == 2) {
-        al_draw_scaled_bitmap(MAP[7], 0, 0, al_get_bitmap_width(MAP[7]), al_get_bitmap_height(MAP[7]), 0, 0, 100, 100, 0);
+        al_draw_scaled_bitmap(MAP[7], 0, 0, al_get_bitmap_width(MAP[7]), al_get_bitmap_height(MAP[7]), 0, 0, 180, 180, 0);
     }
 }
 /*
@@ -303,7 +303,7 @@ void hud_draw()
 {   //time display
     al_draw_textf(font,al_map_rgb_f(1, 1, 1),1000, 100,0,"%06ld",score);
     //number of treasure
-    al_draw_textf(font, al_map_rgb_f(1, 1, 1), 110 + ITEM_TREASURE_CHEST_W + 5, 100, 0, "%ld", chest_cnt);
+    al_draw_textf(font, al_map_rgb_f(1, 1, 1), 200 + ITEM_TREASURE_CHEST_W + 5, 100, 0, "%ld", chest_cnt);
     //stage
 
     float bar_width = 300.0f;  // 전체 너비
@@ -320,9 +320,9 @@ void hud_draw()
         al_draw_textf(font_l, al_map_rgb_f(1, 0, 0), 530, 100, 0, "Stage %d", stage);
     int spacing = ITEM_HEART_W + 5;
     for (int i = 0; i < p.hp; i++)
-        al_draw_bitmap(sprites.item[0], 100 + (i * spacing), 30, 0);
+        al_draw_bitmap(sprites.item[0], 180 + (i * spacing), 30, 0);
 
-    al_draw_bitmap(sprites.item[2], 60 + ITEM_TREASURE_CHEST_W + 5, 100, 0);
+    al_draw_bitmap(sprites.item[2], 150 + ITEM_TREASURE_CHEST_W + 5, 100, 0);
     
     //프로필 파일 추가 필요
     //al_draw_bitmap(??????, 60 + 5, 5, 0);
