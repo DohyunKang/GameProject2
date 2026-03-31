@@ -309,6 +309,8 @@ void enemy5_update();
 bool enemy5_collide(int x, int y, int w, int h);
 void enemy5_draw();
 
+void enemyies_init(void);
+
 // hud 함수 선언
 void hud_init();
 void hud_update();

@@ -84,6 +84,7 @@ int title(queue) {
 
 
     done = false;
+    enemies_init();
     al_flush_event_queue(queue);
     memset(key, 0, sizeof(key));
     while (1)
@@ -385,7 +386,6 @@ int main()
     al_register_event_source(queue, al_get_timer_event_source(timer));
 
     keyboard_init();
-    enemies_init();
 
     al_start_timer(timer);
 
@@ -407,7 +407,7 @@ int main()
         stage = 1;
         state = STATE_PLAYING;
         pi_init();
-
+        enemies_init();
         
         if (flag_mode == 1)
             boss_fight_loop(queue);
