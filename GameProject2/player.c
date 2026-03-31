@@ -19,6 +19,7 @@ extern ALLEGRO_SAMPLE* snd_die;
 extern GAME_MODE mode;
 extern unsigned char key[ALLEGRO_KEY_MAX];
 extern SPRITES sprites;
+extern int flag_mode;
 
 void pi_init()
 {
@@ -64,7 +65,7 @@ void player_update()
 		current_h = PLAYER1_H;
 	}
 
-	// 적군 충돌 판정 (독립적) -> 수정: 이재영
+	// 적군 충돌 판정 (독립적)
 	if (p.inv_timer == 0 && enemies_collide(stage, (int)p.x, (int)p.y, current_w, current_h))
 	{
 		if (p.barrier)
@@ -118,6 +119,11 @@ void player_update()
 			}
 			else if (it[i].type == ITEM_TREASURE_CHEST)  //??????
 			{
+				if (flag_mode == 1)
+					fx_add(6, it[i].x, it[i].y);
+				else if (flag_mode == 2)
+					fx_add(5, it[i].x, it[i].y);
+
 				al_play_sample(item[2], 0.4, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
 				chest_cnt++;
 			}

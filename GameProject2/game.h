@@ -133,6 +133,8 @@ extern const int ENEMY_H[ENEMY_TYPE_N];
 #define ENEMY_BEFORE_RAZER_FRAMES 1
 #define ENEMY_RAZER_FRAMES 5
 #define ENEMY_AFTER_RAZER_FRAMES 1
+#define CHEST_CHALLENGE_FRAMES 5
+#define CHEST_BOSS_FRAMES 4
 /*
 // 게임의 현재 흐름을 제어하는 상태 (메뉴, 게임 중, 결과창 등)
 typedef enum {
@@ -243,6 +245,10 @@ typedef struct SPRITES
     ALLEGRO_BITMAP* razer_before_fx;
     ALLEGRO_BITMAP* razer_fx[ENEMY_RAZER_FRAMES];
     ALLEGRO_BITMAP* razer_after_fx;
+
+    // 보물 이팩트
+    ALLEGRO_BITMAP* chest_challenge[CHEST_CHALLENGE_FRAMES];
+    ALLEGRO_BITMAP* chest_boss[CHEST_BOSS_FRAMES];
 } SPRITES;
 
 ALLEGRO_SAMPLE* enemy_explode[5];

@@ -168,6 +168,9 @@
     <None Include="shot.flac" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\..\..\Users\한국전파진흥협회\Downloads\image-Photoroom.png" />
+    <Image Include="..\..\..\..\Users\한국전파진흥협회\Downloads\treasure_boss_fx-Photoroom.png" />
+    <Image Include="..\..\..\..\Users\한국전파진흥협회\Downloads\treasure_fx-Photoroom.png" />
     <Image Include="0.png" />
     <Image Include="1.png" />
     <Image Include="2.png" />
@@ -184,6 +187,7 @@
     <Image Include="doro.png" />
     <Image Include="doro_m.png" />
     <Image Include="GameIMG.png" />
+    <Image Include="GameIMG2.png" />
     <Image Include="spritesheet.png" />
   </ItemGroup>
   <ItemGroup>

@@ -110,53 +110,65 @@ ALLEGRO_BITMAP* sprite_grab(int x, int y, int w, int h)
 
 void sprites_init(void)
 {
-    sprites._sheet = al_load_bitmap("GameIMG.png");
+    sprites._sheet = al_load_bitmap("GameIMG2.png");
     must_init(sprites._sheet, "spritesheet");
 
     /* player: [gender][state][dir] */
 
     /* male */
-    sprites.player[0][0][0] = sprite_grab(15, 11, PLAYER1_W, PLAYER1_H);
-    sprites.player[0][0][1] = sprite_grab(55, 12, PLAYER1_W, PLAYER1_H);
+    sprites.player[0][0][0] = sprite_grab(15 + 44, 11, PLAYER1_W, PLAYER1_H);
+    sprites.player[0][0][1] = sprite_grab(55 + 44, 12, PLAYER1_W, PLAYER1_H);
 
-    sprites.player[0][1][0] = sprite_grab(2, 82, PLAYER2_W, PLAYER2_H);
-    sprites.player[0][1][1] = sprite_grab(52, 83, PLAYER2_W, PLAYER2_H);
+    sprites.player[0][1][0] = sprite_grab(2 + 44, 82, PLAYER2_W, PLAYER2_H);
+    sprites.player[0][1][1] = sprite_grab(52 + 44, 83, PLAYER2_W, PLAYER2_H);
     
-    sprites.player[0][2][0] = sprite_grab(242, 11, PLAYER3_W, PLAYER3_H);
-    sprites.player[0][2][1] = sprite_grab(185, 10, PLAYER3_W, PLAYER3_H);
+    sprites.player[0][2][0] = sprite_grab(242 + 44, 11, PLAYER3_W, PLAYER3_H);
+    sprites.player[0][2][1] = sprite_grab(185 + 44, 10, PLAYER3_W, PLAYER3_H);
 
     /* female */
-    sprites.player[1][0][0] = sprite_grab(100, 11, PLAYER1_W, PLAYER1_H);
-    sprites.player[1][0][1] = sprite_grab(140, 10, PLAYER1_W, PLAYER1_H);
+    sprites.player[1][0][0] = sprite_grab(100 + 44, 11, PLAYER1_W, PLAYER1_H);
+    sprites.player[1][0][1] = sprite_grab(140 + 44, 10, PLAYER1_W, PLAYER1_H);
 
-    sprites.player[1][1][0] = sprite_grab(98, 80, PLAYER2_W, PLAYER2_H);
-    sprites.player[1][1][1] = sprite_grab(145, 80, PLAYER2_W, PLAYER2_H);
+    sprites.player[1][1][0] = sprite_grab(98 + 44, 80, PLAYER2_W, PLAYER2_H);
+    sprites.player[1][1][1] = sprite_grab(145 + 44, 80, PLAYER2_W, PLAYER2_H);
 
-    sprites.player[1][2][0] = sprite_grab(240, 78, PLAYER3_W, PLAYER3_H);
-    sprites.player[1][2][1] = sprite_grab(185, 78, PLAYER3_W, PLAYER3_H);
+    sprites.player[1][2][0] = sprite_grab(240 + 44, 78, PLAYER3_W, PLAYER3_H);
+    sprites.player[1][2][1] = sprite_grab(185 + 44, 78, PLAYER3_W, PLAYER3_H);
 
     /* item */
-    sprites.item[ITEM_HEART] = sprite_grab(203, 155, ITEM_HEART_W, ITEM_HEART_H);
-    sprites.item[ITEM_BARRIER] = sprite_grab(243, 151, ITEM_BARRIER_W, ITEM_BARRIER_H);
-    sprites.item[ITEM_TREASURE_CHEST] = sprite_grab(282, 153, ITEM_TREASURE_CHEST_W, ITEM_TREASURE_CHEST_H);
+    sprites.item[ITEM_HEART] = sprite_grab(203 + 45, 155, ITEM_HEART_W, ITEM_HEART_H);
+    sprites.item[ITEM_BARRIER] = sprite_grab(243 + 45, 151, ITEM_BARRIER_W, ITEM_BARRIER_H);
+    sprites.item[ITEM_TREASURE_CHEST] = sprite_grab(282 + 45, 153, ITEM_TREASURE_CHEST_W, ITEM_TREASURE_CHEST_H);
 
     /* enemy */
-    sprites.enemy[ENEMY_SPEAR] = sprite_grab(52, 154, ENEMY_SPEAR_W, ENEMY_SPEAR_H);
-    sprites.enemy[ENEMY_BOMB] = sprite_grab(84, 145, ENEMY_BOMB_W, ENEMY_BOMB_H);
-    sprites.enemy[ENEMY_FIREBALL] = sprite_grab(131, 153, ENEMY_FIREBALL_W, ENEMY_FIREBALL_H);
-    sprites.enemy[ENEMY_HOMING] = sprite_grab(165, 151, ENEMY_HOMING_W, ENEMY_HOMING_H);
+    sprites.enemy[ENEMY_SPEAR] = sprite_grab(52 + 45, 154, ENEMY_SPEAR_W, ENEMY_SPEAR_H);
+    sprites.enemy[ENEMY_BOMB] = sprite_grab(84 + 45, 145, ENEMY_BOMB_W, ENEMY_BOMB_H);
+    sprites.enemy[ENEMY_FIREBALL] = sprite_grab(131 + 45, 153, ENEMY_FIREBALL_W, ENEMY_FIREBALL_H);
+    sprites.enemy[ENEMY_HOMING] = sprite_grab(165 + 45, 151, ENEMY_HOMING_W, ENEMY_HOMING_H);
     /* fx */
-    sprites.enemy2_bomb[0] = sprite_grab(6, 194, 38, 40);
-    sprites.enemy2_bomb[1] = sprite_grab(46, 192, 54, 42);
-    sprites.enemy2_bomb[2] = sprite_grab(102, 190, 40, 44);
-    sprites.enemy2_bomb[3] = sprite_grab(146, 187, 33, 47);
-    sprites.enemy2_bomb[4] = sprite_grab(182, 187, 34, 47);
+    sprites.enemy2_bomb[0] = sprite_grab(6 + 45, 194, 38, 40);
+    sprites.enemy2_bomb[1] = sprite_grab(46 + 45, 192, 54, 42);
+    sprites.enemy2_bomb[2] = sprite_grab(102 + 45, 190, 40, 44);
+    sprites.enemy2_bomb[3] = sprite_grab(146 + 45, 187, 33, 47);
+    sprites.enemy2_bomb[4] = sprite_grab(182 + 45, 187, 34, 47);
 
-    sprites.enemy4_bomb[0] = sprite_grab(228, 195, 40, 36);
-    sprites.enemy4_bomb[1] = sprite_grab(273, 197, 36, 35);
-    sprites.enemy4_bomb[2] = sprite_grab(9, 246, 34, 30);
-    sprites.enemy4_bomb[3] = sprite_grab(50, 246, 35, 37);
-    sprites.enemy4_bomb[4] = sprite_grab(90, 240, 30, 47);
+    sprites.enemy4_bomb[0] = sprite_grab(228 + 45, 195, 40, 36);
+    sprites.enemy4_bomb[1] = sprite_grab(273 + 45, 197, 36, 35);
+    sprites.enemy4_bomb[2] = sprite_grab(9 + 45, 246, 34, 30);
+    sprites.enemy4_bomb[3] = sprite_grab(50 + 45, 246, 35, 37);
+    sprites.enemy4_bomb[4] = sprite_grab(90 + 45, 240, 30, 47);
+
+    /* fx 보물상자_챌린지 */
+    sprites.chest_challenge[0] = sprite_grab(168, 256, 32, 22);
+    sprites.chest_challenge[1] = sprite_grab(7, 292, 54, 47);
+    sprites.chest_challenge[2] = sprite_grab(14, 140, 77, 53);
+    sprites.chest_challenge[3] = sprite_grab(320, 237, 77, 53);
+    sprites.chest_challenge[4] = sprite_grab(60, 320, 33, 23);
+    /* fx 보물상자_보스 */
+    sprites.chest_boss[0] = sprite_grab(65, 284, 57, 35);
+    sprites.chest_boss[1] = sprite_grab(122, 300, 57, 88);
+    sprites.chest_boss[2] = sprite_grab(208, 246, 105, 79);
+    sprites.chest_boss[3] = sprite_grab(320, 300, 70, 44);
 
     /*레이저*/
     sprites._sheet = al_load_bitmap("razer_IMG.png");
@@ -230,6 +242,20 @@ void sprites_deinit(void)
         }
     }
 
+    for (int i = 0; i < CHEST_CHALLENGE_FRAMES; i++) {
+        if (sprites.chest_challenge[i]) {
+            al_destroy_bitmap(sprites.chest_challenge[i]);
+            sprites.chest_challenge[i] = NULL;
+        }
+    }
+
+    for (int i = 0; i < CHEST_BOSS_FRAMES; i++) {
+        if (sprites.chest_boss[i]) {
+            al_destroy_bitmap(sprites.chest_boss[i]);
+            sprites.chest_boss[i] = NULL;
+        }
+    }
+
     if (sprites.razer_after_fx) {
         al_destroy_bitmap(sprites.razer_after_fx);
         sprites.razer_after_fx = NULL;
@@ -256,35 +282,35 @@ void sprites_init()
     must_init(sprites._sheet, "spritesheet");
 
     // 남자
-    sprites.player[0][0][0] = sprite_grab(5, 10, PLAYER1_W, PLAYER1_H);
-    sprites.player[0][0][1] = sprite_grab(48, 10, PLAYER1_W, PLAYER1_H);
+    sprites.player[0][0][0] = sprite_grab(5+52, 10, PLAYER1_W, PLAYER1_H);
+    sprites.player[0][0][1] = sprite_grab(48+52, 10, PLAYER1_W, PLAYER1_H);
 
-    sprites.player[0][1][0] = sprite_grab(10, 82, PLAYER2_W, PLAYER2_H);
-    sprites.player[0][1][1] = sprite_grab(45, 78, PLAYER2_W, PLAYER2_H);
+    sprites.player[0][1][0] = sprite_grab(10+52, 82, PLAYER2_W, PLAYER2_H);
+    sprites.player[0][1][1] = sprite_grab(45+52, 78, PLAYER2_W, PLAYER2_H);
 
-    sprites.player[0][2][0] = sprite_grab(178, 80, PLAYER3_W, PLAYER3_H);
-    sprites.player[0][2][1] = sprite_grab(230, 80, PLAYER3_W, PLAYER3_H);
+    sprites.player[0][2][0] = sprite_grab(178+52, 80, PLAYER3_W, PLAYER3_H);
+    sprites.player[0][2][1] = sprite_grab(230+52, 80, PLAYER3_W, PLAYER3_H);
 
     //여자
-    sprites.player[1][0][0] = sprite_grab(95, 10, PLAYER1_W, PLAYER1_H);
-    sprites.player[1][0][1] = sprite_grab(140, 8, PLAYER1_W, PLAYER1_H);
+    sprites.player[1][0][0] = sprite_grab(95+52, 10, PLAYER1_W, PLAYER1_H);
+    sprites.player[1][0][1] = sprite_grab(140+52, 8, PLAYER1_W, PLAYER1_H);
 
-    sprites.player[1][1][0] = sprite_grab(92, 81, PLAYER2_W, PLAYER2_H);
-    sprites.player[1][1][1] = sprite_grab(138, 80, PLAYER2_W, PLAYER2_H);
+    sprites.player[1][1][0] = sprite_grab(92+52, 81, PLAYER2_W, PLAYER2_H);
+    sprites.player[1][1][1] = sprite_grab(138+52, 80, PLAYER2_W, PLAYER2_H);
 
-    sprites.player[1][2][0] = sprite_grab(178, 5, PLAYER3_W, PLAYER3_H);
-    sprites.player[1][2][1] = sprite_grab(228, 5, PLAYER3_W, PLAYER3_H);
+    sprites.player[1][2][0] = sprite_grab(178+52, 5, PLAYER3_W, PLAYER3_H);
+    sprites.player[1][2][1] = sprite_grab(228+52, 5, PLAYER3_W, PLAYER3_H);
 
     // 아이템 (하트, 베리어, 보물 순)
-    sprites.item[0] = sprite_grab(4, 200, ITEM1_W, ITEM1_H);
-    sprites.item[1] = sprite_grab(52, 196, ITEM2_W, ITEM2_H);
-    sprites.item[2] = sprite_grab(10, 155, ITEM3_W, ITEM3_H);
+    sprites.item[0] = sprite_grab(4+52, 200, ITEM1_W, ITEM1_H);
+    sprites.item[1] = sprite_grab(52+52, 196, ITEM2_W, ITEM2_H);
+    sprites.item[2] = sprite_grab(10+52, 155, ITEM3_W, ITEM3_H);
 
     // 적
-    sprites.enemy[0] = sprite_grab(67, 155, ENEMY_DAGGER_W, ENEMY_DAGGER_H);
-    sprites.enemy[1] = sprite_grab(105, 145, ENEMY_BOMB_W, ENEMY_BOMB_H);
-    sprites.enemy[2] = sprite_grab(167, 154, ENEMY_FIREBALL_W, ENEMY_FIREBALL_H);
-    sprites.enemy[3] = sprite_grab(212, 148, ENEMY_HOMING_W, ENEMY_HOMING_H);
+    sprites.enemy[0] = sprite_grab(67+52, 155, ENEMY_DAGGER_W, ENEMY_DAGGER_H);
+    sprites.enemy[1] = sprite_grab(105+52, 145, ENEMY_BOMB_W, ENEMY_BOMB_H);
+    sprites.enemy[2] = sprite_grab(167+52, 154, ENEMY_FIREBALL_W, ENEMY_FIREBALL_H);
+    sprites.enemy[3] = sprite_grab(212+52, 148, ENEMY_HOMING_W, ENEMY_HOMING_H);
 }
 
 void sprites_deinit()
