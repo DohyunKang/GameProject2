@@ -6,6 +6,7 @@ extern Player p;
 float sw, sh;
 extern bool win;
 extern Enemy enemy2[ENEMY2_N];
+extern SPRITES sprites;
 
 DORO_s doro;
 
@@ -30,10 +31,11 @@ typedef enum {
 } DORO_STATE;
 
 typedef enum {
-    RAZER_p, 
-    RAZER_do,
+    RAZER_WARNING,  // fx 2 (경고)
+    RAZER_SHOOTING, // fx 3 (발사 준비)
+    RAZER_FULL      // 완전한 레이저 (enemy5)
 } RAZER_STATE;
-int flag_l = RAZER_p;
+int flag_l = RAZER_WARNING;
 struct SPRITES_D 
 {
     ALLEGRO_BITMAP* _sheet;
@@ -90,7 +92,7 @@ void shots_update()
         shots[i].x += shots[i].dx;
         shots[i].y += shots[i].dy;
 
-        if (shots[i].y < 200)
+		if ((shots[i].y < 200) || (shots[i].y > 800) || (shots[i].x < 200) || (shots[i].x > 1000))
         {
             shots[i].active = false;
             continue;
@@ -105,7 +107,7 @@ void shots_draw()
         if (!shots[i].active)
             continue;
 
-        al_draw_bitmap(DORO_img.shot, shots[i].x, shots[i].y, 0);
+        al_draw_bitmap(sprites.enemy[ENEMY_SPEAR], shots[i].x, shots[i].y, 0);
 
     }
 }
@@ -114,21 +116,28 @@ int razer[3] = { 0, 0, 0 };
 void doro_attack_1() {
     r_timer--;
     if (!(r_timer)) {
-        switch (flag_l)
-        {
-        case RAZER_p:
-            flag_l = RAZER_do;
+        switch (flag_l) {
+        case RAZER_WARNING:
+            flag_l = RAZER_SHOOTING;
             fx_add(2, 200, razer[0] + 30);
             fx_add(2, 200, razer[1] + 30);
             fx_add(2, 200, razer[2] + 30);
-            r_timer = 50;
+            r_timer = 50; // 경고 50프레임 대기
             break;
-        case RAZER_do:
-            flag_l = RAZER_p;
+
+        case RAZER_SHOOTING:
+            flag_l = RAZER_FULL;
+            fx_add(3, 200, razer[0] + 55);
+            fx_add(3, 200, razer[1] + 55);
+            fx_add(3, 200, razer[2] + 55);
+            r_timer = 24; // 애니메이션(3장) * 8프레임 = 24프레임 대기
+            break;
+        case RAZER_FULL:
+            // 여기서 flag_l = RAZER_WARNING; 로 돌려도 되지만 다음 턴에 초기화됨
             enemy5_add(200, razer[0]);
             enemy5_add(200, razer[1]);
             enemy5_add(200, razer[2]);
-            r_timer = 50;
+            r_timer = 50; // 완전 발사 유지 시간
             break;
         }
     }
@@ -248,13 +257,17 @@ void doro_update() {
         if (doro.timer <= 0) {
             // 공격 1 또는 2 결정
             doro.attack = rand() % 2 + 1;
-            doro.timer = 50;      //50 프레임 동안 공격
             if (doro.attack == 1)
             {
                 for (int i = 0; i < 3; ++i)
                     razer[i] = between_f(MAP_TOP, MAP_BOTTOM - ENEMY5_W);
-                doro.timer = 100;
+                // 50(경고) + 24(발사준비, 3프레임*8) + 50(발사유지) = 총 124프레임
+                doro.timer = 124;
                 r_timer = 1;
+                flag_l = RAZER_WARNING; // 시작 상태 초기화
+            }
+            else {
+                doro.timer = 50;
             }
             doro.state = DORO_ATTACKING;
         }
@@ -378,7 +391,7 @@ void boss_fight_loop(ALLEGRO_EVENT_QUEUE* queue) {
             fx_draw();
             player_draw();
             shots_draw();
-
+            addprofile();
             doro_attack_draw();
             doro_draw();
             item_draw();

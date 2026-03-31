@@ -142,7 +142,7 @@ int title(queue) {
     return 0;
 }
 
-int end(queue) {
+int end_stage(queue) {
     
     softly_next(4, 0, queue);
 
@@ -260,7 +260,7 @@ int end(queue) {
 }
 
 
-int end2(queue) {
+int end_boss(queue) {
 
     bool done = false;
     ALLEGRO_EVENT event;
@@ -409,10 +409,10 @@ int main()
         pi_init();
 
         
-        if (flag_mode == 2)
+        if (flag_mode == 1)
             boss_fight_loop(queue);
 
-        if (flag_mode == 1) {
+        if (flag_mode == 2) {
             softly_next(1, 0, queue);
             //__game_loop();
 
@@ -498,9 +498,9 @@ int main()
 
 
         }
-        if (flag_mode == 1 && end(queue)) // if return 1 >> end game
+        if (flag_mode == 1 && end_boss(queue)) // if return 1 >> end game
             break;
-        else if (flag_mode == 2 && end2(queue))
+        else if (flag_mode == 2 && end_stage(queue))
             break;
 
     }

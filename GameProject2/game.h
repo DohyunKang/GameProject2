@@ -342,7 +342,7 @@ bool enemies_collide(int stage, int x, int y, int w, int h);
 
 
 int title(ALLEGRO_EVENT_QUEUE * q);
-int end(ALLEGRO_EVENT_QUEUE* q);
+int end_stage(ALLEGRO_EVENT_QUEUE* q);
 
 
 

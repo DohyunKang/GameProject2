@@ -542,15 +542,16 @@ bool enemy5_add(int x, int y) {
 }
 
 void enemy5_update() {
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < ENEMY5_N; i++)
     {
         if (!enemy5[i].active)
             continue;
 
         enemy5[i].timer--;
 
-        if (enemy5[i].timer <= 0)
-        {
+        if (enemy5[i].timer <= 0) {
+            // 공격이 끝나면 잔상(fx 4)을 추가
+            fx_add(4, enemy5[i].x, enemy5[i].y + 55);
             enemy5[i].active = false;
 
             continue;

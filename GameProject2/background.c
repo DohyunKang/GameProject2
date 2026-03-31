@@ -311,7 +311,7 @@ void hud_draw()
     float x = (BUFFER_W - bar_width) / 2.0f; // 화면 중앙 정렬
     float y = 20.0f;           // 상단 여백
 
-    if (flag_mode == 2) {
+    if (flag_mode == 1) {
         al_draw_textf(font_l, al_map_rgb_f(1, 0, 0), 530, 100, 0, "DORO");
         al_draw_filled_rectangle(200, 170, 200 + 200 * 4, 180, al_map_rgb(0, 0, 0));
         al_draw_filled_rectangle(200, 170, 200 + doro.hp*4, 180, al_map_rgb(200, 0, 0));
