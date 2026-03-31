@@ -245,7 +245,7 @@ typedef struct SPRITES
     ALLEGRO_BITMAP* razer_after_fx;
 } SPRITES;
 
-ALLEGRO_SAMPLE* enemy_explode[3];
+ALLEGRO_SAMPLE* enemy_explode[5];
 ALLEGRO_SAMPLE* item[3];
 ALLEGRO_SAMPLE* death[2];
 ALLEGRO_SAMPLE* hit[2];

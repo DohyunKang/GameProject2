@@ -13,6 +13,11 @@ void audio_init()
     enemy_explode[2] = al_load_sample("enemy1_3.wav");
     must_init(enemy_explode[2], "explode[2] sample");
 
+    enemy_explode[3] = al_load_sample("boss_hit.wav");
+    must_init(enemy_explode[3], "explode[3] sample");
+    enemy_explode[4] = al_load_sample("boss_razer.wav");
+    must_init(enemy_explode[4], "explode[4] sample");
+
     item[0] = al_load_sample("Item_heart.wav");
     must_init(item[0], "item[0] sample");
     item[1] = al_load_sample("Item_barrier.wav");
@@ -36,6 +41,9 @@ void audio_deinit()
     al_destroy_sample(enemy_explode[0]);
     al_destroy_sample(enemy_explode[1]);
     al_destroy_sample(enemy_explode[2]);
+    al_destroy_sample(enemy_explode[3]);
+    al_destroy_sample(enemy_explode[4]);
+
     al_destroy_sample(item[0]);
     al_destroy_sample(item[1]);
     al_destroy_sample(item[2]);

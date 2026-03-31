@@ -7,6 +7,7 @@ float sw, sh;
 extern bool win;
 extern Enemy enemy2[ENEMY2_N];
 extern SPRITES sprites;
+extern int chest_cnt;
 
 DORO_s doro;
 
@@ -18,7 +19,7 @@ typedef struct SHOT
     bool active;
 } SHOT;
 
-#define SHOTS_N 3
+#define SHOTS_N 50
 SHOT shots[SHOTS_N];
 
 typedef enum {
@@ -72,8 +73,17 @@ bool shots_add(int x, int y)
         shots[i].x = p.x;
         shots[i].y = p.y;
 
-        shots[i].dx = (doro.x - p.x) / 100;
-        shots[i].dy = (doro.y - p.y) / 100;
+
+        float tmp_x = (doro.x + 80 - p.x) * (doro.x + 80 - p.x);
+        float tmp_y = (doro.y + 50 - p.y) * (doro.y + 50 - p.y);
+
+        shots[i].dx = sqrt(tmp_x / (tmp_x + tmp_y)) * 10;
+        shots[i].dy = sqrt(tmp_y / (tmp_x + tmp_y)) * 10;
+
+        if ((doro.x + 80 - p.x) < 0)
+            shots[i].dx = -shots[i].dx;
+        if ((doro.y + 50 - p.y) < 0)
+            shots[i].dy = -shots[i].dy;
 
         shots[i].active = true;
 
@@ -98,6 +108,7 @@ void shots_update()
             continue;
         }
     }
+
 }
 
 void shots_draw()
@@ -134,6 +145,7 @@ void doro_attack_1() {
             break;
         case RAZER_FULL:
             // 여기서 flag_l = RAZER_WARNING; 로 돌려도 되지만 다음 턴에 초기화됨
+            al_play_sample(enemy_explode[4], 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
             enemy5_add(200, razer[0]);
             enemy5_add(200, razer[1]);
             enemy5_add(200, razer[2]);
@@ -145,7 +157,7 @@ void doro_attack_1() {
 }
 
 void doro_attack_2() {
-    for (int i = 0; i < 2; i++){
+    for (int i = 0; i < 3; i++){
         enemy4_add();
     }
     return;
@@ -234,6 +246,7 @@ void doro_update() {
             float target_y = between(200, 800 - 150);
 
             // 2. 1초 동안 이동할 속도(dx, dy)
+
             doro.dx = (target_x - doro.x) / 50.0f;
             doro.dy = (target_y - doro.y) / 50.0f;
 
@@ -330,11 +343,12 @@ void boss_fight_loop(ALLEGRO_EVENT_QUEUE* queue) {
     bool done= false;
     bool redraw = true;
     ALLEGRO_EVENT event;
-
+    int s_duty = 50;
 
     softly_next(3, 0, queue);
     while (1)
     {
+        win = false;
         al_wait_for_event(queue, &event);
 
         switch (event.type)
@@ -342,14 +356,18 @@ void boss_fight_loop(ALLEGRO_EVENT_QUEUE* queue) {
         case ALLEGRO_EVENT_TIMER:
             doro_update();
             
-            if (!(frame % 50))
+            if (!(frame % s_duty))
                 shots_add(p.x, p.y);
             shots_update();
+            if (chest_cnt < 5)
+                s_duty = 50 - 10*chest_cnt;
             item_update();
             
             
-            if (frame % 50 == 0)
+            if (frame % 50 == 0) {
+                al_play_sample(enemy_explode[3], 0.75, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
                 enemy3_add(doro.x + 85, doro.y + 70);
+            }
             enemy3_update();
             enemy4_updatex(p.x, p.y);
             enemy5_update();

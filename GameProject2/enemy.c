@@ -16,6 +16,8 @@ extern ALLEGRO_BITMAP* buffer;
 extern Enemy enemy[MAX_ENEMIES];
 extern SPRITES sprites;
 extern long frame;
+extern int flag_mode;
+extern DORO_s doro;
 
 #define ENEMY1_AUDIO_CYCLE 50
 #define ENEMY5_W 50
@@ -373,8 +375,13 @@ bool enemy4_add(void)
         if (enemy4[i].active)
             continue;
 
-        spawn_enemy(&enemy4[i].x, &enemy4[i].y);
-
+        if (flag_mode == 1) {
+            enemy4[i].x = doro.x + between_f(-200, 200);
+            enemy4[i].y = doro.y + between_f(-200, 200);
+        }
+        else if (flag_mode == 2) {
+            spawn_enemy(&enemy4[i].x, &enemy4[i].y);
+        }
         enemy4[i].dx = 0.0f;
         enemy4[i].dy = 0.0f;
         enemy4[i].timer = ENEMY4_TIMER;
@@ -481,6 +488,7 @@ void enemy4_updatex(float player_x, float player_y)
 
         if (enemy4[i].timer <= 0)
         {
+            al_play_sample(enemy_explode[1], 1.0, 0, 1, ALLEGRO_PLAYMODE_ONCE, NULL);
             fx_add(true, enemy4[i].x, enemy4[i].y);
             enemy4[i].active = false;
             continue;

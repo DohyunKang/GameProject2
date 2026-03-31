@@ -191,6 +191,8 @@
   </ItemGroup>
   <ItemGroup>
     <Media Include="boom_reze.wav" />
+    <Media Include="boss_hit.wav" />
+    <Media Include="boss_razer.wav" />
     <Media Include="death1.wav" />
     <Media Include="death2.wav" />
     <Media Include="enemy1_3.wav" />
