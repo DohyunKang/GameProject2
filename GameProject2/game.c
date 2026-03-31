@@ -409,10 +409,10 @@ int main()
         pi_init();
 
         
-        if (flag_mode == 2)
+        if (flag_mode == 1)
             boss_fight_loop(queue);
 
-        if (flag_mode == 1) {
+        if (flag_mode == 2) {
             softly_next(1, 0, queue);
             //__game_loop();
 
@@ -498,9 +498,9 @@ int main()
 
 
         }
-        if (flag_mode == 1 && end(queue)) // if return 1 >> end game
+        if (flag_mode == 1 && end2(queue)) // if return 1 >> end game
             break;
-        else if (flag_mode == 2 && end2(queue))
+        else if (flag_mode == 2 && end(queue))
             break;
 
     }
