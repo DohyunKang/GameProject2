@@ -24,10 +24,12 @@
   <a href="./천마가 돌아왔다 게임소개 영상 YOUTUBE">
     https://youtu.be/xsbJ-VstK2Y
   </a>
+
 - **HTML 문서**: API / 함수 구조 문서
   <a href="./game_project.html">
     [game_project.html](https://github.com/user-attachments/files/26392844/game_project.html)
   </a>
+
 - **PPTX 발표자료**: 프로젝트 발표용 슬라이드
   <a href="./천마가 돌아왔다 프로젝트 시연.pptx">
     [천마가 돌아왔다 프로젝트 시연.pptx](https://github.com/user-attachments/files/26392834/default.pptx)
