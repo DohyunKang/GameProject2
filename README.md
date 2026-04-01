@@ -22,7 +22,7 @@
 - **게임 소개 영상**: 실제 플레이 흐름과 화면 연출 확인
 <p align="center">
   <a href="./천마가 돌아왔다 게임소개 영상 YOUTUBE">
-    https://youtu.be/xsbJ-VstK2Y
+    [youtube]https://youtu.be/xsbJ-VstK2Y
   </a>
 
 - **HTML 문서**: API / 함수 구조 문서
