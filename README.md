@@ -19,22 +19,11 @@
 ---
 
 ## 첨부 자료
-- **게임 소개 영상**: 실제 플레이 흐름과 화면 연출 확인
-<p align="center">
-  <a href="./천마가 돌아왔다 게임소개 영상 YOUTUBE">
-    [youtube]https://youtu.be/xsbJ-VstK2Y
-  </a>
+- **게임 소개 영상**: 실제 플레이 흐름과 화면 연출 확인 : https://youtu.be/xsbJ-VstK2Y
 
-- **HTML 문서**: API / 함수 구조 문서
-  <a href="./game_project.html">
-    [game_project.html](https://github.com/user-attachments/files/26392844/game_project.html)
-  </a>
-
-- **PPTX 발표자료**: 프로젝트 발표용 슬라이드
-  <a href="./천마가 돌아왔다 프로젝트 시연.pptx">
-    [천마가 돌아왔다 프로젝트 시연.pptx](https://github.com/user-attachments/files/26392834/default.pptx)
-  </a>
-</p>
+- **HTML 문서**: API / 함수 구조 문서 : [game_project.html](https://github.com/user-attachments/files/26392844/game_project.html)
+  
+- **PPTX 발표자료**: 프로젝트 발표용 슬라이드 : [천마가 돌아왔다 프로젝트 시연.pptx](https://github.com/user-attachments/files/26392834/default.pptx)
 
 ---
 
