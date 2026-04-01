@@ -2,7 +2,7 @@
 > 몰락한 천마의 귀환, 그리고 복수의 시작
 
 <p align="center">
-  <img src="./images/main_menu.png" width="85%" alt="천마가 돌아왔다 메인 화면">
+  <img width="1200" height="893" alt="0" src="https://github.com/user-attachments/assets/15375328-572d-4e7b-a7f6-a7abe59d8f8d" />
 </p>
 
 <p align="center">
@@ -29,14 +29,14 @@
 ## 바로 보기 / 첨부 자료
 
 <p align="center">
-  <a href="./천마가 돌아왔다 게임소개 영상.mp4">
-    <img src="https://img.shields.io/badge/VIDEO-게임%20소개%20영상-b22222?style=for-the-badge" />
+  <a href="./천마가 돌아왔다 게임소개 영상 YOUTUBE">
+    https://youtu.be/xsbJ-VstK2Y
   </a>
   <a href="./game_project.html">
-    <img src="https://img.shields.io/badge/HTML-API%20문서%20보기-1f6feb?style=for-the-badge" />
+    [game_project.html](https://github.com/user-attachments/files/26392844/game_project.html)
   </a>
   <a href="./천마가 돌아왔다 프로젝트 시연.pptx">
-    <img src="https://img.shields.io/badge/PPTX-프로젝트%20발표자료-f28c28?style=for-the-badge" />
+    [천마가 돌아왔다 프로젝트 시연.pptx](https://github.com/user-attachments/files/26392834/default.pptx)
   </a>
 </p>
 
@@ -69,14 +69,3 @@
 - **개발 인원**: 4인 팀 프로젝트
 
 ---
-
-## 문서 미리보기
-
-### API 문서
-- [HTML 문서 열기](./game_project.html)
-
-### 발표 자료
-- [PPTX 다운로드 / 열기](./천마가%20돌아왔다%20프로젝트%20시연.pptx)
-
-### 시연 영상
-- [MP4 영상 보기](./천마가%20돌아왔다%20게임소개%20영상.mp4)
