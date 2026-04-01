@@ -4,15 +4,7 @@
 <p align="center">
   <img width="1200" height="893" alt="0" src="https://github.com/user-attachments/assets/15375328-572d-4e7b-a7f6-a7abe59d8f8d" />
 </p>
-
 <p align="center">
-  <a href="./천마가 돌아왔다 게임소개 영상.mp4">
-    <img src="./images/main_menu.png" width="70%" alt="게임 소개 영상 보기">
-  </a>
-</p>
-
-<p align="center">
-  ▶ 위 이미지를 클릭하면 <b>게임 소개 영상</b>이 열립니다.
 </p>
 
 ---
@@ -26,27 +18,21 @@
 
 ---
 
-## 바로 보기 / 첨부 자료
-
+## 첨부 자료
+- **게임 소개 영상**: 실제 플레이 흐름과 화면 연출 확인
 <p align="center">
   <a href="./천마가 돌아왔다 게임소개 영상 YOUTUBE">
     https://youtu.be/xsbJ-VstK2Y
   </a>
+- **HTML 문서**: API / 함수 구조 문서
   <a href="./game_project.html">
     [game_project.html](https://github.com/user-attachments/files/26392844/game_project.html)
   </a>
+- **PPTX 발표자료**: 프로젝트 발표용 슬라이드
   <a href="./천마가 돌아왔다 프로젝트 시연.pptx">
     [천마가 돌아왔다 프로젝트 시연.pptx](https://github.com/user-attachments/files/26392834/default.pptx)
   </a>
 </p>
-
----
-
-## 첨부 자료 설명
-
-- **게임 소개 영상**: 실제 플레이 흐름과 화면 연출 확인
-- **HTML 문서**: API / 함수 구조 문서
-- **PPTX 발표자료**: 프로젝트 발표용 슬라이드
 
 ---
 
