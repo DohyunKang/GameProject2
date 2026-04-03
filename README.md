@@ -2,9 +2,6 @@
 > 몰락한 천마의 귀환, 그리고 복수의 시작
 
 <p align="center">
-  <img width="1200" height="893" alt="0" src="https://github.com/user-attachments/assets/15375328-572d-4e7b-a7f6-a7abe59d8f8d" />
-</p>
-<p align="center">
   <img src="./assets/intro1.gif" alt="천마가 돌아왔다 게임소개 영상 1" width="1000"/>
 </p>
 <p align="center">
